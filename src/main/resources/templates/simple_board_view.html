@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 보기</title>
+</head>
+<body>
+    <hr>
+    <div sec:authorize="isAuthenticated()">
+        <a href="logout">LOG-OUT</a>
+    </div>
+    <a href="/">Main</a>
+    <hr>
+    <div sec:authorize="isAuthenticated()">
+        <span sec:authentication="name"></span>님 환영합니다.
+    </div>
+    <hr>
+    <h3 th:text="${article.title}">title</h3>
+    <p>
+        by <span th:text="${article.username}">anon</span>
+        <span class="text-grey" th:text="${'['+article.Write_DT+']'}">date</span>
+    </p>
+
+    <h5>내용</h5>
+    <pre th:text="${article.content}">.....</pre>
+    <p><a href="/board">[Back to List]</a></p>
+</body>
+</html>

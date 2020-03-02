@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>글쓰기</title>
+</head>
+<body>
+    <hr>
+    <div sec:authorize="isAuthenticated()">
+        <a href="logout">LOG-OUT</a>
+    </div>
+    <a href="/">Main</a>
+    <hr>
+    <div sec:authorize="isAuthenticated()">
+        <span sec:authentication="name"></span>님 환영합니다.
+    </div>
+    <br/>
+    <div>
+        <form method="post" action="/board/proc/write">
+            <div><input type="text" placeholder="title" name="title" /></div>
+            <div><textarea placeholder="content" name="content"></textarea></div>
+            <button>등록</button>
+        </form>
+    </div>
+    <p><a href="/board">[목록으로]</a></p>
+</body>
+</html>

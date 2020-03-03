@@ -28,6 +28,19 @@ public class SimpleBoardDao {
         });
     }
 
+    public Map<String, Object> getNameAndAuthority(String name) {
+        String sql = "select * from authorities where username=?";
+
+        return jt.queryForObject(sql, new Object[] {name}, (rs, rowNum) -> {
+           Map<String, Object> anAuthority = new HashMap<>();
+
+           anAuthority.put("username", rs.getString(1));
+            anAuthority.put("role", rs.getString(2));
+
+            return anAuthority;
+        });
+    }
+
     public Map<String, Object> getAnArticle(int articleId) {
         String sql = "select * from simple_board where seq=?";
 

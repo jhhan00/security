@@ -21,8 +21,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/adminOnly").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/**").permitAll() // 넓은 범위의 URL을 아래로 배치
-                .anyRequest().authenticated()
+                .anyRequest().authenticated() // ?
                 .and()
+                .csrf().disable()
                 .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
                 .defaultSuccessUrl("/")
                 .and()

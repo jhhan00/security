@@ -5,28 +5,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequestMapping("/board")
 public class BoardController {
     @Autowired
     SimpleBoardDao sbd;
 
-    @RequestMapping("/board")
-    public String board(Model model) {
+    @GetMapping
+    public String board(Authentication auth, Model model) throws Exception {
         List<Map<String, Object>> list = sbd.getBoardList();
         model.addAttribute("list",list);
+        Map<String, Object> authority = sbd.getNameAndAuthority(auth.getName());
+        model.addAttribute("authority", authority);
+        System.out.println("987 BOARD");
+        System.out.println("987 " + auth.getName());
 
         return "simple_board";
     }
 
-    @RequestMapping("/board/read/{articleId}")
+    @GetMapping("/read/{articleId}")
     public String ReadAnArticle(Authentication auth, Model model, @PathVariable("articleId") int articleId) {
         Map<String, Object> article = sbd.getAnArticle(articleId);
         model.addAttribute("article",article);
@@ -34,15 +37,15 @@ public class BoardController {
         return "simple_board_view";
     }
 
-    @RequestMapping("/board/write")
+    @GetMapping("/write")
     public String WriteAnArticle() {
         return "simple_board_create";
     }
 
-    @RequestMapping(value="/board/proc/write", method=RequestMethod.POST)
+    @PostMapping("/write")
     public String RegisterAnArticle(Authentication auth, String title, String content) {
         int result = 0;
-        System.out.println("987");
+        System.out.println("987 " + auth.getName());
         if(title != null && !title.equals("") && content != null && !content.equals("")) {
             Map<String, Object> article = new HashMap<>();
             article.put("username", auth.getName());
@@ -53,6 +56,6 @@ public class BoardController {
             System.err.println("Do not write Blank Article");
         }
 
-        return "redirect:/board?writeResult="+result;
+        return "redirect:/board";
     }
 }

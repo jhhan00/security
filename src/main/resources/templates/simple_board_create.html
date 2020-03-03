@@ -9,9 +9,6 @@
 </head>
 <body>
     <hr>
-    <div sec:authorize="isAuthenticated()">
-        <a href="logout">LOG-OUT</a>
-    </div>
     <a href="/">Main</a>
     <hr>
     <div sec:authorize="isAuthenticated()">
@@ -19,10 +16,10 @@
     </div>
     <br/>
     <div>
-        <form method="post" action="/board/proc/write">
+        <form method="POST" action="/board/write">
             <div><input type="text" placeholder="title" name="title" /></div>
             <div><textarea placeholder="content" name="content"></textarea></div>
-            <button>등록</button>
+            <button type="submit">등록</button>
         </form>
     </div>
     <p><a href="/board">[목록으로]</a></p>

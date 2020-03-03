@@ -13,12 +13,6 @@ public class TestController {
     }
 
     @ResponseBody
-    @RequestMapping("/test")
-    public String test() {
-        return "OK";
-    }
-
-    @ResponseBody
     @RequestMapping("/adminOnly")
     public String adminOnly() {
         return "SecretPage";

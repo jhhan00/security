@@ -9,12 +9,10 @@
 </head>
 <body>
     <hr>
-    <div sec:authorize="isAuthenticated()">
-        <a href="logout">LOG-OUT</a>
-    </div>
     <a href="/">Main</a>
     <hr>
     <div sec:authorize="isAuthenticated()">
+        <div><a href="logout">LOG-OUT</a></div>
         <span sec:authentication="name"></span>님 환영합니다.
     </div>
     <hr>

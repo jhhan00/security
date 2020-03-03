@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Error Page</h1>
+        <h2>You have to Go to the Previous Page</h2>
+        error code : <span th:text="${code}"></span><br/>
+        error Msg  : <span th:text="${msg}"></span><br/>
+        TimeStamp  : <span th:text="${timeStamp}"></span>
+    </div>
+    <br/>
+    <a href="/">메인으로</a>
+</body>
+</html>

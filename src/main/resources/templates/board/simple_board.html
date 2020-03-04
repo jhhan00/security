@@ -6,6 +6,9 @@
 <head>
     <meta charset="UTF-8">
     <title>예제 게시판</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
     <link rel="stylesheet" type="text/css" href="/board.css">
 </head>
 <body>
@@ -20,7 +23,9 @@
     <hr>
     <div sec:authorize="isAuthenticated()">
         <span sec:authentication="name"></span>님 환영합니다.
-        <div class="t-r"><a href="/board/write">등록하기</a></div>
+        <div>
+            <div class="t-r" th:if="${authority.role}=='USER'"><a href="/board/write">등록하기</a></div>
+        </div>
     </div>
     <div>
         <span th:text="${authority.username}"></span>

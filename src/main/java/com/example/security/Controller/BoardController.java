@@ -1,6 +1,6 @@
 package com.example.security.Controller;
 
-import com.example.security.SimpleBoardDao;
+import com.example.security.Dao.SimpleBoardDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -23,23 +23,25 @@ public class BoardController {
         model.addAttribute("list",list);
         Map<String, Object> authority = sbd.getNameAndAuthority(auth.getName());
         model.addAttribute("authority", authority);
-        System.out.println("987 BOARD");
-        System.out.println("987 " + auth.getName());
+        System.out.println("board " + auth.getName());
 
-        return "simple_board";
+        return "board/simple_board";
     }
 
     @GetMapping("/read/{articleId}")
     public String ReadAnArticle(Authentication auth, Model model, @PathVariable("articleId") int articleId) {
+        System.out.println("View " + auth.getName());
         Map<String, Object> article = sbd.getAnArticle(articleId);
         model.addAttribute("article",article);
+        Map<String, Object> authority = sbd.getNameAndAuthority(auth.getName());
+        model.addAttribute("authority", authority);
 
-        return "simple_board_view";
+        return "board/simple_board_view";
     }
 
     @GetMapping("/write")
-    public String WriteAnArticle() {
-        return "simple_board_create";
+    public String WriteAnArticle(Model model) {
+        return "board/simple_board_create";
     }
 
     @PostMapping("/write")

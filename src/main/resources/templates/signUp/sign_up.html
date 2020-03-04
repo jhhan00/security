@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" href="/board.css">
+</head>
+<body>
+    <div class="container">
+        <div class="t-c">
+            <h2>회원가입</h2>
+        </div>
+        <a href="/">메인으로</a>
+        <div>
+            <h5>회원정보</h5>
+            <form class="needs-validation" novalidate th:action="@{/signUp}" method="post">
+                <div>
+                    <label for="username">아이디(username)</label>
+                    <div>
+                        <input type="text" id="username" class="form-control" placeholder="AAA@pharmcadd.com" required name="user_id" />
+                        <div class="invalid-feedback" style="width: 100%;">Your username is required.</div>
+                    </div>
+                </div>
+                <div>
+                    <label for="realname">이름(realname)</label>
+                    <div>
+                        <input type="text" id="realname" class="form-control" placeholder="Your English Name" required name="user_realname" />
+                        <div class="invalid-feedback" style="width: 100%;">Your real_name is required.</div>
+                    </div>
+                </div>
+                <div>
+                    <label for="password">비밀번호(password)</label>
+                    <div>
+                        <input type="password" id="password" class="form-control" required name="user_password" />
+                    </div>
+                </div>
+                <div>
+                    <label for="password">비밀번호 확인(password_check)</label>
+                    <div>
+                        <input type="password" id="pw_check" class="form-control" required name="user_password_check" />
+                    </div>
+                </div>
+                <button class="btn btn-primary" type="submit">가입하기</button>
+                <button class="btn"><a href="login">취소</a></button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -11,6 +11,18 @@ public class SimpleUserDao {
     @Autowired
     JdbcTemplate jt;
 
+    public String GetPassword(String user_id) {
+        String sql = "select password from users where username = ?";
+
+        return jt.queryForObject(sql, new Object[]{user_id}, String.class);
+    }
+
+    public int UpdatePassword(String user_id, String password) {
+        String sql = "update users set password = ? where username = ?";
+
+        return jt.update(sql, password, user_id);
+    }
+
     public int InsertUserInfo(Map<String, String> user) {
         String sql = "insert into users values(?,?,1,?)";
 

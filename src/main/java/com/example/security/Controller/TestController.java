@@ -1,7 +1,9 @@
 package com.example.security.Controller;
 
 import com.example.security.Dao.SimpleUserDao;
+import com.example.security.Extra.GenerateCertNumber;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -9,12 +11,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Date;
 import java.util.Map;
 
 @Controller
 public class TestController {
     @Autowired
     SimpleUserDao sud;
+
+    private String certNumber = "";
 
     @RequestMapping("/")
     public String home(ModelAndView mav) {
@@ -91,7 +100,7 @@ public class TestController {
     }
 
     @PostMapping("/signUp")
-    public String SignUpFunction(Model model, @RequestParam Map<String, String> params) {
+    public String SignUpFunction(Model model, @RequestParam Map<String, String> params) throws MessagingException {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         System.out.println(params); // 값들이 잘 넘어오는지 확인
 
@@ -138,20 +147,8 @@ public class TestController {
             }
         }
 
+        // 인증번호 생성
         if(isValidate) {
-            try {
-                int rs = sud.InsertAuthorityInfo(userID);
-                if(rs<1) {
-                    result += "SignUp_failed. Check your Information and try again. ";
-                    isValidate=false;
-                } else {
-                    result += "SignUp is completed! ";
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                result += "SignUp_failed. Check your Information and try again. ";
-                isValidate=false;
-            }
         }
 
         model.addAttribute("isSuccess",isValidate);

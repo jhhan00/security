@@ -24,18 +24,12 @@ public class SimpleUserDao {
     }
 
     public int InsertUserInfo(Map<String, String> user) {
-        String sql = "insert into users values(?,?,1,?)";
+        String sql = "insert into users values(?,?,0,?,'USER')";
 
         return jt.update(sql,
                 user.get("user_id"),
                 user.get("user_password"),
                 user.get("user_realname")
         );
-    }
-
-    public int InsertAuthorityInfo(String user_id) {
-        String sql = "insert into authorities values(?,'USER')";
-
-        return jt.update(sql, user_id);
     }
 }

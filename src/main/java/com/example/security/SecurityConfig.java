@@ -1,5 +1,6 @@
 package com.example.security;
 
+import com.example.security.Handler.TaskImplementingLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/adminOnly").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/**").permitAll() // 넓은 범위의 URL을 아래로 배치
-                .anyRequest().authenticated() // ?
+                .anyRequest().authenticated()
                 .and()
                 .csrf().disable()
                 .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
@@ -49,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .dataSource(dataSource)
                 .rolePrefix("ROLE_")
                 .usersByUsernameQuery("select username, password, enabled from users where username = ?")
-                .authoritiesByUsernameQuery("select username, role from authorities where username = ?");
+                .authoritiesByUsernameQuery("select username, role from users where username = ?");
     }
 
     @Bean

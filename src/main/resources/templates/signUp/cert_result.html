@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Certification Result</title>
+</head>
+<body>
+    <div>
+        <div th:text="${UserId}"></div>
+        <p th:text="${msg}"></p>
+        <div th:if="${isSuccess}">
+            <a href="/">Main</a>
+        </div>
+        <div th:unless="${isSuccess}">
+            <form action="/request" method="get">
+                <input type="hidden" th:value="${UserId}" name="UserId"/>
+                <button type="submit">Again</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

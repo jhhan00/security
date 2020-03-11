@@ -32,4 +32,10 @@ public class SimpleUserDao {
                 user.get("user_realname")
         );
     }
+
+    public int UpdateEnabled(String userid) {
+        String sql = "update users set enabled = 1 where username = ?";
+
+        return jt.update(sql, userid);
+    }
 }

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>회원가입 결과</title>
@@ -10,6 +9,7 @@
 </head>
 <body>
     <h2 class="t-c">회원가입 결과여부</h2>
+    <span th:text="${ID}"></span>님
     <div class="t-c">
         <p th:text="${resultMSG}"></p>
         <p th:unless="${isSuccess}">
@@ -17,7 +17,10 @@
             <a href="/">Main</a>
         </p>
         <div th:if="${isSuccess}">
-            인증절차 진행하기;
+            <form action="/request" method="get">
+                <input type="hidden" th:value="${ID}" name="UserId"/>
+                <button type="submit">인증하기</button>
+            </form>
         </div>
     </div>
 </body>

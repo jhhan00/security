@@ -1,9 +1,7 @@
 package com.example.security.Controller;
 
 import com.example.security.Dao.SimpleUserDao;
-import com.example.security.Extra.GenerateCertNumber;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -11,19 +9,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.util.Date;
 import java.util.Map;
 
 @Controller
 public class TestController {
     @Autowired
     SimpleUserDao sud;
-
-    private String certNumber = "";
 
     @RequestMapping("/")
     public String home(ModelAndView mav) {
@@ -147,12 +139,9 @@ public class TestController {
             }
         }
 
-        // 인증번호 생성
-        if(isValidate) {
-        }
-
         model.addAttribute("isSuccess",isValidate);
         model.addAttribute("resultMSG",result);
+        model.addAttribute("ID",userID);
 
         return "signUp/sign_up_result";
     }

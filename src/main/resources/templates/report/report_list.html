@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Report List</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="/">Main</a>
+            <div sec:authorize="isAuthenticated()">
+                <a href="logout">LOG-OUT</a>
+            </div>
+            <span th:text="${authority.username}"></span>, Welcome!
+            <span th:text="${authority.realName}"></span>
+            <span th:text="${authority.role}"></span>
+            <div class="t-r"><a href="/report/create/daily">Register</a></div>
+        </div>
+        <table class="table table-striped t-c">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>type</th>
+                    <th>title</th>
+                    <th>UserName</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="report, i:${list}">
+                    <td th:text="${report.No}"></td>
+                    <td th:text="${report.report_type}"></td>
+                    <td th:if="${report.report_type} == 'Notice'">
+                        <a th:href="${'/report/detail/' + report.No}" th:text="${report.simpleDate} + '_' + ${report.report_type}"></a>
+                    </td>
+                    <td th:unless="${report.report_type} == 'Notice'">
+                        <a th:href="${'/report/detail/' + report.No}" th:text="${report.simpleDate} + '_' + ${report.report_type} + '_Report'"></a>
+                    </td>
+                    <td th:text="${report.username}"></td>
+                    <td th:text="${report.writeDate}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

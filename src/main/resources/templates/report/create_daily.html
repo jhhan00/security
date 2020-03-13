@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Daily</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+    <script>
+        var count1 = 0;
+        var count2 = 0;
+        function add(num, ss) {
+            var count = 0;
+            if(num==1) count = count1;
+            else count = count2;
+            var addedform = document.getElementById('field' + num);
+            var str = "<input type=\"text\" class=\"form-control\" name=\"" + ss + count + " \"/>";
+            var div = document.createElement('div');
+            div.id="added" + count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+            count++; console.log(count);
+            if(num==1) count1 = count;
+            else count2 = count;
+        }
+        function remove(num) {
+            var count = 0;
+            if(num==1) count = count1;
+            else count = count2;
+            console.log(count);
+            if(count > 1) {
+                var addedDiv = document.getElementById("added" + (--count));
+                document.getElementById('field'+num).removeChild(addedDiv);
+            }
+            if(num==1) count1 = count;
+            else count2 = count;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="/">Main</a>
+            <a href="/report">Back</a>
+            <div>
+                <span th:text="${authority.username}">username</span>, Welcome!
+                <span th:text="${authority.realName}">realname</span>
+                <span th:text="${authority.role}">role</span>
+            </div>
+        </div>
+        <hr/>
+        <div>
+            <form name="base" method="post" action="/report/create/daily">
+                <div>
+                    <label>Done</label>
+                    <div id="field1"></div>
+                    <input type="button" value="Add" onclick="add(1, 'Done')"/>
+                    <input type="button" value="Delete" onclick="remove(1)" />
+                </div>
+                <div>
+                    <label>Etc</label>
+                    <div id="field2"></div>
+                    <input type="button" value="Add" onclick="add(2, 'Etc')"/>
+                    <input type="button" value="Delete" onclick="remove(2)" />
+                </div>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8">
+    <title>Report View</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="/">Main</a>
+            <div sec:authorize="isAuthenticated()">
+                <a href="logout">LOG-OUT</a>
+            </div>
+            <span th:text="${authority.username}">username</span>, Welcome!
+            <span th:text="${authority.realName}">realname</span>
+            <span th:text="${authority.role}">role</span>
+        </div>
+        <hr/>
+        <p>
+            <h5 th:text="${info.simpleDate + '_' + info.report_type}"></h5>
+            by <span th:text="${info.username}"></span>
+        </p>
+        <h4>Content</h4>
+        <div>
+            <ul th:each="view, i:${list}">
+                <strong><li th:text="${view.kind}"></li></strong>
+                <li th:text="${view.description}"></li>
+            </ul>
+        </div>
+        <a href="/report">Back to List</a>
+    </div>
+</body>
+</html>

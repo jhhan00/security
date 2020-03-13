@@ -8,6 +8,7 @@
     <title>Select Menu</title>
 </head>
 <body>
+    <a href="/report">ReportSystem</a>
     <a href="/board">게시판</a>
     <a sec:authorize="hasRole('ADMIN')" href="adminOnly">adminOnly </a>
     <a sec:authorize="!isAuthenticated()" href="login">LOG-IN</a>

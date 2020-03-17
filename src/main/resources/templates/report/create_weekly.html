@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Weekly</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+           $("#plan").show();
+           $("#after").hide();
+
+           $("input[name=select]").change(function() {
+              var value = $(this).val();
+              if(value == "plan") {
+                  $("#plan").show();
+                  $("#after").hide();
+              } else if(value == "after") {
+                  $("#plan").hide();
+                  $("#after").show();
+              }
+           });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="/">Main</a>
+            <a href="/report">Back</a>
+            <div>
+                <span th:text="${authority.username}">username</span>, Welcome!
+                <span th:text="${authority.realName}">realname</span>
+                <span th:text="${authority.role}">role</span>
+            </div>
+        </div>
+        <hr/>
+        create weekly
+        <div>
+            <div>
+                <label><input type="radio" name="select" value="plan" checked="checked"> weekly_plan</label>
+                <label><input type="radio" name="select" value="after"> weekly_result</label>
+            </div>
+            <div id="plan">
+                PLAN
+                <form th:object="${task}" method="post" action="/report/create/weekly">
+                    <input placeholder="plan" name="A">
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+            <div id="after">
+                after
+                <form th:object="${task}" method="post" action="/report/create/weekly">
+                    <input placeholder="after" name="A">
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -24,14 +24,19 @@
         </div>
         <hr/>
         <p>
-            <h5 th:text="${info.simpleDate + '_' + info.report_type}"></h5>
+            <h5 th:text="${info.simpleDate + '_' + info.reportType}"></h5>
             by <span th:text="${info.username}"></span>
+        <span class="text-grey" th:text="${'['+info.writeDate+']'}"></span>
+        <div th:unless="${info.writeDate} == ${info.updatedTime}">
+            last updated is <span class="text-grey" th:text="${'['+info.updatedTime+']'}"></span>
+        </div>
         </p>
         <h4>Content</h4>
         <div>
-            <ul th:each="view, i:${list}">
-                <strong><li th:text="${view.kind}"></li></strong>
-                <li th:text="${view.description}"></li>
+            <ul th:each="view:${list}">
+                <strong><li th:text="${view.reportKind}"></li></strong>
+                <span th:unless="${view.done} == null"><li th:text="${view.done}"></li></span>
+                <span th:unless="${view.progress} == null" th:text="${view.progress}"></span>
             </ul>
         </div>
         <a href="/report">Back to List</a>

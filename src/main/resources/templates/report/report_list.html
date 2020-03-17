@@ -21,7 +21,7 @@
             <span th:text="${authority.username}"></span>, Welcome!
             <span th:text="${authority.realName}"></span>
             <span th:text="${authority.role}"></span>
-            <div class="t-r"><a href="/report/create/daily">Register</a></div>
+            <div class="t-r"><a href="/report/create/daily">Daily </a><a href="/report/create/weekly">Weekly </a><a>Monthly </a></div>
         </div>
         <table class="table table-striped t-c">
             <thead>
@@ -30,21 +30,23 @@
                     <th>type</th>
                     <th>title</th>
                     <th>UserName</th>
-                    <th>Date</th>
+                    <th>Create_Date</th>
+                    <th>Last_Update</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="report, i:${list}">
-                    <td th:text="${report.No}"></td>
-                    <td th:text="${report.report_type}"></td>
-                    <td th:if="${report.report_type} == 'Notice'">
-                        <a th:href="${'/report/detail/' + report.No}" th:text="${report.simpleDate} + '_' + ${report.report_type}"></a>
+                <tr th:each="report:${list}">
+                    <td th:text="${report.reportId}"></td>
+                    <td th:text="${report.reportType}"></td>
+                    <td th:if="${report.reportType} == 'Notice'">
+                        <a th:href="${'/report/detail/' + report.reportId}" th:text="${report.simpleDate} + '_' + ${report.reportType}"></a>
                     </td>
-                    <td th:unless="${report.report_type} == 'Notice'">
-                        <a th:href="${'/report/detail/' + report.No}" th:text="${report.simpleDate} + '_' + ${report.report_type} + '_Report'"></a>
+                    <td th:unless="${report.reportType} == 'Notice'">
+                        <a th:href="${'/report/detail/' + report.reportId}" th:text="${report.simpleDate} + '_' + ${report.reportType} + '_Report'"></a>
                     </td>
                     <td th:text="${report.username}"></td>
                     <td th:text="${report.writeDate}"></td>
+                    <td th:text="${report.updatedTime}"></td>
                 </tr>
             </tbody>
         </table>

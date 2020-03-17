@@ -11,33 +11,23 @@
     <link rel="stylesheet" href="/bootstrap-reboot.css">
     <link rel="stylesheet" type="text/css" href="/board.css">
     <script>
-        var count1 = 0;
-        var count2 = 0;
-        function add(num, ss) {
-            var count = 0;
-            if(num==1) count = count1;
-            else count = count2;
-            var addedform = document.getElementById('field' + num);
-            var str = "<input type=\"text\" class=\"form-control\" name=\"" + ss + count + " \"/>";
+        var count = 0;
+        function add() {
+            var addedform = document.getElementById('field');
+            var str = "<input type=\"text\" class=\"form-control\" name=\"done" + count + " \" />";
             var div = document.createElement('div');
             div.id="added" + count;
             div.innerHTML = str;
             addedform.appendChild(div);
-            count++; console.log(count);
-            if(num==1) count1 = count;
-            else count2 = count;
+            count++;
+            console.log(count);
         }
-        function remove(num) {
-            var count = 0;
-            if(num==1) count = count1;
-            else count = count2;
+        function remove() {
             console.log(count);
             if(count > 1) {
                 var addedDiv = document.getElementById("added" + (--count));
-                document.getElementById('field'+num).removeChild(addedDiv);
+                document.getElementById('field').removeChild(addedDiv);
             }
-            if(num==1) count1 = count;
-            else count2 = count;
         }
     </script>
 </head>
@@ -54,18 +44,12 @@
         </div>
         <hr/>
         <div>
-            <form name="base" method="post" action="/report/create/daily">
+            <form th:object="${task}" method="post" action="/report/create/daily">
                 <div>
                     <label>Done</label>
-                    <div id="field1"></div>
-                    <input type="button" value="Add" onclick="add(1, 'Done')"/>
-                    <input type="button" value="Delete" onclick="remove(1)" />
-                </div>
-                <div>
-                    <label>Etc</label>
-                    <div id="field2"></div>
-                    <input type="button" value="Add" onclick="add(2, 'Etc')"/>
-                    <input type="button" value="Delete" onclick="remove(2)" />
+                    <div id="field"></div>
+                    <input type="button" value="Add" onclick="add()"/>
+                    <input type="button" value="Delete" onclick="remove()" />
                 </div>
                 <button class="btn btn-primary" type="submit">Submit</button>
             </form>

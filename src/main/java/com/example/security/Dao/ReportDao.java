@@ -66,6 +66,7 @@ public class ReportDao {
            Map<String, Object> r_info = new HashMap<>();
 
            r_info.put("username",rs.getString(2));
+            r_info.put("writeDate",rs.getString(3));
             r_info.put("report_type",rs.getString(4));
             r_info.put("simpleDate",rs.getString(5));
 

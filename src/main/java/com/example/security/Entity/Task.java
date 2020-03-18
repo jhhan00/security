@@ -21,5 +21,5 @@ public class Task {
     private String reportKind;
     private String progress;
     private String done;
-    private int achievement;
+    private String achievement;
 }

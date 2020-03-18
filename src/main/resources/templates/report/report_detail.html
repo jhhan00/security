@@ -37,6 +37,7 @@
                 <strong><li th:text="${view.reportKind}"></li></strong>
                 <span th:unless="${view.done} == null"><li th:text="${view.done}"></li></span>
                 <span th:unless="${view.progress} == null" th:text="${view.progress}"></span>
+                <span th:unless="${view.achievement} == null" th:text="${view.achievement}"></span>
             </ul>
         </div>
         <a href="/report">Back to List</a>

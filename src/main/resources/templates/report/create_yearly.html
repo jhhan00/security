@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Project Goal</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+
+    <script>
+        var dscr_count=0;
+        var milestone_count=0;
+        function description_add() {
+            var addedform = document.getElementById('descriptions');
+            var str =
+                "<label>Description</label>" +
+                "<input type='text' class='form-control' name='description" + dscr_count + "' placeholder='project description" + dscr_count + "'/>";
+            var div = document.createElement('div');
+            div.id="Description" + dscr_count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            dscr_count++; console.log(dscr_count);
+        }
+        function description_delete() {
+            console.log(dscr_count);
+            if(dscr_count > 1) {
+                var addedDiv = document.getElementById("Description" + (--dscr_count));
+                document.getElementById('descriptions').removeChild(addedDiv);
+            }
+        }
+        function milestone_add() {
+            var addedform = document.getElementById('milestones');
+            var str =
+                "<label>Milestone</label>" +
+                "<input type='text' class='form-control' name='milestone" + milestone_count + "' placeholder='milestone" + milestone_count + "'/>";
+            var div = document.createElement('div');
+            div.id = "Milestone" + milestone_count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            milestone_count++; console.log(milestone_count);
+        }
+        function milestone_delete() {
+            console.log(milestone_count);
+            if(milestone_count > 1) {
+                var addedDiv = document.getElementById("Milestone" + (--milestone_count));
+                document.getElementById('milestones').removeChild(addedDiv);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="/">Main</a>
+            <a href="/report">Back</a>
+            <div>
+                <span th:text="${authority.username}">username</span>, Welcome!
+                <span th:text="${authority.realName}">realname</span>
+                <span th:text="${authority.role}">role</span>
+            </div>
+        </div>
+        <hr/>
+        Project Goal Writing!
+        <div>
+            <form th:object="${task}" method="post" action="/report/create/project_goal">
+                <div>
+                    <label>Project Description</label>
+                    <div id="descriptions"></div>
+                    <input type="button" value="Add" onclick="description_add()"/>
+                    <input type="button" value="Delete" onclick="description_delete()"/>
+                </div>
+                <div>
+                    <label>Milestones</label>
+                    <div id="milestones"></div>
+                    <input type="button" value="Add" onclick="milestone_add()"/>
+                    <input type="button" value="Delete" onclick="milestone_delete()"/>
+                </div>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

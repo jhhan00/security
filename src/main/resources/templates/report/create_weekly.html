@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/bootstrap-grid.css">
     <link rel="stylesheet" href="/bootstrap-reboot.css">
     <link rel="stylesheet" type="text/css" href="/board.css">
+
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript">
         $(document).ready(function() {
@@ -26,6 +27,25 @@
               }
            });
         });
+
+        var count = 0;
+        function plan_add() {
+            var addedform = document.getElementById('plan_div');
+            var str = "<input type=\"text\" class=\"form-control\" name=\"plan" + count + "\"/>";
+            var div = document.createElement('div');
+            div.id="plan" + count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            count++; console.log(count);
+        }
+        function plan_delete() {
+            console.log(count);
+            if(count > 1) {
+                var addedDiv = document.getElementById("plan" + (--count));
+                document.getElementById('plan_div').removeChild(addedDiv);
+            }
+        }
     </script>
 </head>
 <body>
@@ -49,15 +69,32 @@
             <div id="plan">
                 PLAN
                 <form th:object="${task}" method="post" action="/report/create/weekly">
-                    <input placeholder="plan" name="A">
-                    <button type="submit">Submit</button>
+                    <input type="hidden" name="planOrAfter" value="plan"/>
+                    <div>
+                        <div id="plan_div"></div>
+                        <input type="button" value="Add" onclick="plan_add()"/>
+                        <input type="button" value="Delete" onclick="plan_delete()"/>
+                    </div>
+                    <div th:if="${Valid} == false">
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </div>
                 </form>
             </div>
             <div id="after">
-                after
+                After
                 <form th:object="${task}" method="post" action="/report/create/weekly">
-                    <input placeholder="after" name="A">
-                    <button type="submit">Submit</button>
+                    <input type="hidden" name="planOrAfter" value="after"/>
+                    <div th:each="plan, i:${task}">
+                        <div th:unless="${plan.progress} == null">
+                            <label>Progress</label>
+                            <input type="text" th:name="${'plan'+i.index}" th:value="${plan.progress}">
+                            <label>Achievement</label>
+                            <input type="text" placeholder="1~100 or text" th:name="${'achieve'+i.index}"/>
+                        </div>
+                    </div>
+                    <div th:if="${Valid} == true">
+                        <button class="btn btn-primary" type="submit">Submit</button>
+                    </div>
                 </form>
             </div>
         </div>

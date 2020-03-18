@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Monthly</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+
+    <script>
+        var count1 = 0;
+        var count2 = 0;
+        function month_result_add() {
+            var addedform = document.getElementById('month_result');
+            var str =
+                "<label>Done </label>" +
+                "<input type='text' name='done" + count1 + "' />" +
+                "<label> Achievement </label>" +
+                "<input type='text' placeholder='1~100 or text' name='achievement" + count1 +"'/>";
+            var div = document.createElement('div');
+            div.id="Added_done" + count1;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            count1++; console.log(count1);
+        }
+        function month_result_delete() {
+            console.log(count1);
+            if(count1 > 1) {
+                var addedDiv = document.getElementById("Added_done" + (--count1));
+                document.getElementById('month_result').removeChild(addedDiv);
+            }
+        }
+        function next_month_add() {
+            var addedform = document.getElementById('next_month');
+            var str =
+                "<label>Plan</label>" +
+                "<input type='text' placeholder='next_month_plan" + count2 + "' name='plan" + count2 + "' />";
+            var div = document.createElement('div');
+            div.id="Added_plan" + count2;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            count2++; console.log(count2);
+        }
+        function next_month_delete() {
+            console.log(count1);
+            if(count2 > 1) {
+                var addedDiv = document.getElementById('Added_plan' + (--count2));
+                document.getElementById('next_month').removeChild(addedDiv);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="/">Main</a>
+            <a href="/report">Back</a>
+            <div>
+                <span th:text="${authority.username}">username</span>, Welcome!
+                <span th:text="${authority.realName}">realname</span>
+                <span th:text="${authority.role}">role</span>
+            </div>
+        </div>
+        <hr/>
+        Create Monthly
+        <div>
+            <form th:object="${task}" method="post" action="/report/create/monthly">
+                <div>
+                    <label>This Month</label>
+                    <div id="month_result"></div>
+                    <input type="button" value="Add" onclick="month_result_add()"/>
+                    <input type="button" value="Delete" onclick="month_result_delete()"/>
+                </div>
+                <div>
+                    <label>Next Month</label>
+                    <div id="next_month"></div>
+                    <input type="button" value="Add" onclick="next_month_add()"/>
+                    <input type="button" value="Delete" onclick="next_month_delete()"/>
+                </div>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -28,4 +28,6 @@ public class Report {
     @UpdateTimestamp
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedTime;
+
+    private String state;
 }

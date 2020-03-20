@@ -40,6 +40,17 @@
                 <span th:unless="${view.achievement} == null" th:text="${view.achievement}"></span>
             </ul>
         </div>
+        <div th:if="${authority.username} == ${info.username}" th:unless="${info.state} == 'Approved'">
+            <a>Modify</a>
+            <a>Delete</a>
+        </div>
+        <div th:if="${authority.role} == 'ADMIN' and ${info.state} == 'Waiting'">
+            <form method="post" action="/report/change_state">
+                <input type="hidden" th:value="${info.reportId}" name="report_id"/>
+                <input type="submit" name="Approve" value="Approve">
+                <input type="submit" name="Reject" value="Reject">
+            </form>
+        </div>
         <a href="/report">Back to List</a>
     </div>
 </body>

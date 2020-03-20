@@ -13,12 +13,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Null;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -47,17 +45,35 @@ public class ReportController {
         return "report/report_list";
     }
 
+    @GetMapping("/search") // report 검색해서 보기
+    public String reportSearch(Authentication auth, Model model, @RequestParam("type")String type,
+                               @RequestParam("search_info")String info) {
+        Map<String, String> authority = rd.getUserInfo(auth.getName());
+        model.addAttribute("authority", authority);
+
+        List<Report> rlist = null;
+        if(type.equals("username")) {
+            rlist = reportRepository.findByUsernameStartsWith(info);
+        } else if(type.equals("reportType")) {
+            rlist = reportRepository.findByReportType(info);
+        } else if(type.equals("condition")) {
+            rlist = reportRepository.findByState(info);
+        }
+        model.addAttribute("list",rlist);
+        return "report/report_list";
+    }
+
     @GetMapping("/detail/{reportId}") // report 상세보기
     public String reportView(@PathVariable("reportId") long reportid, Model model, Authentication auth) {
         System.out.println(reportid + ". " + auth.getName() + " in detail");
 
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority",authority);
+
         List<Task> list = this.taskRepository.findByReportId(reportid);
-        System.out.println(list);
         model.addAttribute("list",list);
+
         Report rp = this.reportRepository.findByReportId(reportid);
-        System.out.println(rp);
         model.addAttribute("info",rp);
 
         return "report/report_detail";
@@ -89,6 +105,7 @@ public class ReportController {
         report.setSimpleDate(nowDate);
         report.setWriteDate(now);
         report.setUpdatedTime(now);
+        report.setState("Waiting");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -161,6 +178,7 @@ public class ReportController {
         report.setSimpleDate(nowDate);
         report.setWriteDate(now);
         report.setUpdatedTime(now);
+        report.setState("Waiting");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -216,6 +234,7 @@ public class ReportController {
         report.setSimpleDate(nowDate);
         report.setWriteDate(now);
         report.setUpdatedTime(now);
+        report.setState("Waiting");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -275,6 +294,7 @@ public class ReportController {
         report.setSimpleDate(nowDate);
         report.setWriteDate(now);
         report.setUpdatedTime(now);
+        report.setState("Waiting");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -299,6 +319,80 @@ public class ReportController {
             task.setProgress(request.getParameter(key));
             System.out.println(task);
             taskRepository.save(task);
+        }
+
+        return "redirect:/report";
+    }
+
+    @GetMapping("/create/notice")
+    public String createNotice(Authentication auth, Model model) {
+        Map<String, String> authority = rd.getUserInfo(auth.getName());
+        model.addAttribute("authority", authority);
+
+        List<Task> taskList = null;
+        model.addAttribute("task",taskList);
+
+        return "/report/create_notice";
+    }
+
+    @PostMapping("/create/notice")
+    public String createNoticeAction(Authentication auth, HttpServletRequest request) {
+        Enumeration<String> keys = request.getParameterNames();
+
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+        String nowDate = now.format(dtf);
+
+        //Report Save
+        Report report = new Report();
+        report.setUsername(auth.getName());
+        report.setReportType("Notice");
+        report.setSimpleDate(nowDate);
+        report.setWriteDate(now);
+        report.setUpdatedTime(now);
+        report.setState("Approved");
+        System.out.println(report);
+        reportRepository.save(report);
+
+        System.out.println(report.getReportId());
+        long r_id = report.getReportId();
+
+        while(keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            log.info(key + " : " + request.getParameter(key));
+            Task task = new Task();
+            task.setReportId(r_id);
+            task.setUsername(auth.getName());
+            task.setSimpleDate(nowDate);
+            task.setReportType("Notice");
+            task.setReportKind("notice");
+            task.setProgress(request.getParameter(key));
+            System.out.println(task);
+            taskRepository.save(task);
+        }
+
+        return "redirect:/report";
+    }
+
+    @PostMapping("/change_state")
+    public String changeState(HttpServletRequest request) {
+        Enumeration<String> line = request.getParameterNames();
+        long id = -1;
+        while(line.hasMoreElements()){
+            String tmp = line.nextElement();
+            log.info(tmp + " _ " + request.getParameter(tmp));
+            if(tmp.equals("report_id"))
+                id = Long.parseLong(request.getParameter(tmp));
+            else if(tmp.equals("Approve")) {
+                Report report = reportRepository.findByReportId(id);
+                report.setState("Approved");
+                reportRepository.save(report);
+            }
+            else if(tmp.equals("Reject")) {
+                Report report = reportRepository.findByReportId(id);
+                report.setState("Rejected");
+                reportRepository.save(report);
+            }
         }
 
         return "redirect:/report";

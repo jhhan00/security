@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Notice Create</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+    <script>
+        var count = 0;
+        function add() {
+            var addedform = document.getElementById('field');
+            var str =
+                "<label>Notice</label>"+
+                "<input type=\"text\" class=\"form-control\" name=\"notice" + count + " \" />";
+            var div = document.createElement('div');
+            div.id="added" + count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+            count++;
+            console.log(count);
+        }
+        function remove() {
+            console.log(count);
+            if(count > 1) {
+                var addedDiv = document.getElementById("added" + (--count));
+                document.getElementById('field').removeChild(addedDiv);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div>
+            <a href="/">Main</a>
+            <a href="/report">Back</a>
+            <div>
+                <span th:text="${authority.username}">username</span>, Welcome!
+                <span th:text="${authority.realName}">realname</span>
+                <span th:text="${authority.role}">role</span>
+            </div>
+        </div>
+        <hr/>
+        <div>
+            Create Notice!
+            <form th:object="${task}" method="post" action="/report/create/notice">
+                <div>
+                    <h5><label>Notice</label></h5>
+                    <div id="field"></div>
+                    <input type="button" value="Add" onclick="add()"/>
+                    <input type="button" value="Delete" onclick="remove()" />
+                </div>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

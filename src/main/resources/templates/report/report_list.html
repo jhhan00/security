@@ -15,34 +15,55 @@
     <div class="container">
         <div>
             <a href="/">Main</a>
+            <a href="/report">Report</a>
             <div sec:authorize="isAuthenticated()">
                 <a href="logout">LOG-OUT</a>
             </div>
             <span th:text="${authority.username}"></span>, Welcome!
             <span th:text="${authority.realName}"></span>
             <span th:text="${authority.role}"></span>
-            <div class="t-r">
+        </div>
+        <br/>
+        <div>
+            <form method="get" action="/report/search">
+                <label>SEARCH</label>
+                <select name="type">
+                    <option selected>Select</option>
+                    <option value="username">Username</option>
+                    <option value="reportType">Report Type</option>
+                    <option value="condition">Report State</option>
+                </select>
+                <input type="text" class="form-control" name="search_info" />
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+        <div class="t-r">
+            <a th:if="${authority.role} == 'ADMIN'" href="/report/create/notice">Notice</a>
+            <div th:unless="${authority.role} == 'ADMIN'">
                 <a href="/report/create/daily">Daily </a>
                 <a href="/report/create/weekly">Weekly </a>
                 <a href="/report/create/monthly">Monthly </a>
                 <a href="/report/create/project_goal">Project Goal </a>
             </div>
         </div>
-        <table class="table table-striped t-c">
+        <table class="table table-hover t-c">
             <thead>
                 <tr>
                     <th>No.</th>
                     <th>type</th>
+                    <th>state</th>
                     <th>title</th>
                     <th>UserName</th>
                     <th>Create_Date</th>
-                    <th>Last_Update</th>
+                    <!--<th>Last_Update</th>-->
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="report:${list}">
                     <td th:text="${report.reportId}"></td>
-                    <td th:text="${report.reportType}"></td>
+                    <td th:if="${report.reportType} == 'Notice'" th:text="${report.reportType}" class="text-red"></td>
+                    <td th:unless="${report.reportType} == 'Notice'" th:text="${report.reportType}"></td>
+                    <td th:text="${report.state}"></td>
                     <td th:if="${report.reportType} == 'Notice'">
                         <a th:href="${'/report/detail/' + report.reportId}" th:text="${report.simpleDate} + '_' + ${report.reportType}"></a>
                     </td>
@@ -51,7 +72,7 @@
                     </td>
                     <td th:text="${report.username}"></td>
                     <td th:text="${report.writeDate}"></td>
-                    <td th:text="${report.updatedTime}"></td>
+                    <!--<td th:text="${report.updatedTime}"></td>-->
                 </tr>
             </tbody>
         </table>

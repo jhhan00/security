@@ -12,11 +12,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +35,7 @@ public class ReportController {
 
     @GetMapping // report 전체보기
     public String reportList(Model model, Authentication auth) {
-        List<Report> list = reportRepository.findAll();
+        List<Report> list = reportRepository.findAllByOrderByWriteDateDesc();
         model.addAttribute("list",list);
 
         System.out.println(auth.getName() + " in report list");
@@ -53,13 +53,29 @@ public class ReportController {
 
         List<Report> rlist = null;
         if(type.equals("username")) {
-            rlist = reportRepository.findByUsernameStartsWith(info);
-        } else if(type.equals("reportType")) {
-            rlist = reportRepository.findByReportType(info);
-        } else if(type.equals("condition")) {
-            rlist = reportRepository.findByState(info);
+            rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(info);
+        } else if(type.equals("reportTitle")) {
+            rlist = reportRepository.findByReportTitleContainingOrderByWriteDateDesc(info);
         }
         model.addAttribute("list",rlist);
+        return "report/report_list";
+    }
+
+    @GetMapping("/sorting") // report 정렬해서 원하는 것 보기
+    public String reportSorting(Authentication auth, Model model, @RequestParam("Big")String big,
+                                @RequestParam("Small")String small) {
+        Map<String, String> authority = rd.getUserInfo(auth.getName());
+        model.addAttribute("authority", authority);
+
+        System.out.println(big + " , " + small);
+        List<Report> rlist = null;
+        if(big.equals("type")) {
+            rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(small);
+        } else if(big.equals("state")) {
+            rlist = reportRepository.findByStateOrderByWriteDateDesc(small);
+        }
+        model.addAttribute("list",rlist);
+
         return "report/report_list";
     }
 
@@ -106,6 +122,7 @@ public class ReportController {
         report.setWriteDate(now);
         report.setUpdatedTime(now);
         report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Daily_Report");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -179,6 +196,7 @@ public class ReportController {
         report.setWriteDate(now);
         report.setUpdatedTime(now);
         report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Weekly_Report");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -235,6 +253,7 @@ public class ReportController {
         report.setWriteDate(now);
         report.setUpdatedTime(now);
         report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Monthly_Report");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -295,6 +314,7 @@ public class ReportController {
         report.setWriteDate(now);
         report.setUpdatedTime(now);
         report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Yearly_Report");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -351,6 +371,7 @@ public class ReportController {
         report.setWriteDate(now);
         report.setUpdatedTime(now);
         report.setState("Approved");
+        report.setReportTitle(nowDate + "_Notice");
         System.out.println(report);
         reportRepository.save(report);
 
@@ -375,7 +396,7 @@ public class ReportController {
     }
 
     @PostMapping("/change_state")
-    public String changeState(HttpServletRequest request) {
+    public String changeState(HttpServletRequest request) throws MessagingException {
         Enumeration<String> line = request.getParameterNames();
         long id = -1;
         while(line.hasMoreElements()){
@@ -385,6 +406,9 @@ public class ReportController {
                 id = Long.parseLong(request.getParameter(tmp));
             else if(tmp.equals("Approve")) {
                 Report report = reportRepository.findByReportId(id);
+                EmailSendController es = new EmailSendController();
+                System.out.println("Username : " + report.getUsername());
+                es.SendApproveOrReject(report.getUsername(), "Approved");
                 report.setState("Approved");
                 reportRepository.save(report);
             }
@@ -395,6 +419,20 @@ public class ReportController {
             }
         }
 
-        return "redirect:/report";
+        return "redirect:/report/detail/" + id;
+    }
+
+    @GetMapping("/request_mail")
+    public String reviewReport(@RequestParam("rId")String id, @RequestParam("username")String name) throws MessagingException {
+        System.out.println("id : "+id);
+        System.out.println("name : " + name);
+
+        EmailSendController es = new EmailSendController();
+
+        Report rp = reportRepository.findByReportId(Long.parseLong(id));
+        rp.setState("Requested");
+        reportRepository.save(rp);
+
+        return "redirect:/report/detail/" + id;
     }
 }

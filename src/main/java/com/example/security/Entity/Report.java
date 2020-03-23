@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table(name="reportRtable")
 public class Report {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reportId;
 
     private String username;
@@ -30,4 +30,5 @@ public class Report {
     private LocalDateTime updatedTime;
 
     private String state;
+    private String reportTitle;
 }

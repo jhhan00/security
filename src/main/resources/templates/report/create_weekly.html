@@ -31,7 +31,9 @@
         var count = 0;
         function plan_add() {
             var addedform = document.getElementById('plan_div');
-            var str = "<input type=\"text\" class=\"form-control\" name=\"plan" + count + "\"/>";
+            var str =
+                "<lable>Weekly_Plan</lable>"+
+                "<input type=\"text\" class=\"form-control\" name=\"plan" + count + "\"/>";
             var div = document.createElement('div');
             div.id="plan" + count;
             div.innerHTML = str;

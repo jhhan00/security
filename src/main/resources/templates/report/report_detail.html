@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="/bootstrap-grid.css">
     <link rel="stylesheet" href="/bootstrap-reboot.css">
     <link rel="stylesheet" type="text/css" href="/board.css">
+
 </head>
 <body>
     <div class="container">
@@ -26,31 +27,90 @@
         <p>
             <h5 th:text="${info.simpleDate + '_' + info.reportType}"></h5>
             by <span th:text="${info.username}"></span>
-        <span class="text-grey" th:text="${'['+info.writeDate+']'}"></span>
-        <div th:unless="${info.writeDate} == ${info.updatedTime}">
-            last updated is <span class="text-grey" th:text="${'['+info.updatedTime+']'}"></span>
-        </div>
+            <span class="text-grey" th:text="${'['+info.writeDate+']'}"></span>
+            <div th:unless="${info.writeDate} == ${info.updatedTime}">
+                last updated <span class="text-grey" th:text="${'['+info.updatedTime+']'}"></span>
+            </div>
+            <div>State : <span th:text="${info.state}"></span></div>
         </p>
-        <h4>Content</h4>
         <div>
-            <ul th:each="view:${list}">
-                <strong><li th:text="${view.reportKind}"></li></strong>
-                <span th:unless="${view.done} == null"><li th:text="${view.done}"></li></span>
-                <span th:unless="${view.progress} == null" th:text="${view.progress}"></span>
-                <span th:unless="${view.achievement} == null" th:text="${view.achievement}"></span>
-            </ul>
+            <div th:if="${info.reportType} == 'Daily'">
+                <p><strong>한 일(Done)</strong></p>
+                <div th:each="view:${list}">
+                    <li th:text="${view.done}"></li>
+                </div>
+            </div>
+            <div th:if="${info.reportType} == 'Weekly'">
+                <p><strong>이번 주 계획(This Week Plan)</strong></p>
+                <div th:each="view:${list}">
+                    <div th:if="${view.reportKind} == 'weekly_plan'">
+                        <li th:text="${view.progress}"></li>
+                    </div>
+                </div>
+                <br/>
+                <p><strong>이번주 결과(This Week Result)</strong></p>
+                <div th:each="view:${list}">
+                    <div th:if="${view.reportKind} == 'weekly_result'">
+                        <li th:text="${view.done} + ' : ' + ${view.achievement}"></li>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${info.reportType} == 'Monthly'">
+                <p><strong>이번 달 성과(This Month Result)</strong></p>
+                <div th:each="view:${list}">
+                    <div th:if="${view.reportKind} == 'Done'">
+                        <li th:text="${view.done} + ' : ' + ${view.achievement}"></li>
+                    </div>
+                </div>
+                <br/>
+                <p><strong>다음 달 계획(Next Month Plan)</strong></p>
+                <div th:each="view:${list}">
+                    <div th:if="${view.reportKind} == 'Next_Month_plan'">
+                        <li th:text="${view.progress}"></li>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${info.reportType} == 'Yearly'">
+                <p><strong>프로젝트 설명(Project Description)</strong></p>
+                <div th:each="view:${list}">
+                    <div th:if="${view.reportKind} == 'project_description'">
+                        <li th:text="${view.progress}"></li>
+                    </div>
+                </div>
+                <br/>
+                <p><strong>마일스톤(Milestones)</strong></p>
+                <div th:each="view:${list}">
+                    <div th:if="${view.reportKind} == 'milestone'">
+                        <li th:text="${view.progress}"></li>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${info.reportType} == 'Notice'">
+                <p><strong>공지(Notice)</strong></p>
+                <div th:each="view:${list}">
+                    <li th:text="${view.progress}"></li>
+                </div>
+            </div>
         </div>
-        <div th:if="${authority.username} == ${info.username}" th:unless="${info.state} == 'Approved'">
-            <a>Modify</a>
-            <a>Delete</a>
-        </div>
-        <div th:if="${authority.role} == 'ADMIN' and ${info.state} == 'Waiting'">
-            <form method="post" action="/report/change_state">
-                <input type="hidden" th:value="${info.reportId}" name="report_id"/>
-                <input type="submit" name="Approve" value="Approve">
-                <input type="submit" name="Reject" value="Reject">
+        <br/>
+<!--        <div th:if="${authority.username} == ${info.username}" th:unless="${info.state} == 'Approved'">-->
+<!--            <a>Modify</a>-->
+<!--            <a>Delete</a>-->
+<!--        </div>-->
+        <div th:if="${authority.username} == ${info.username}">
+            <form action="/report/request_mail" method="get">
+                <input type="hidden" name="rId" th:value="${info.reportId}"/>
+                <input type="hidden" name="username" th:value="${info.username}"/>
+                <input type="submit" value="Request"/>
             </form>
         </div>
+<!--        <div th:if="${authority.role} == 'ADMIN' and ${info.state} == 'Waiting'">-->
+<!--            <form method="post" action="/change_state">-->
+<!--                <input type="hidden" th:value="${info.reportId}" name="report_id"/>-->
+<!--                <input type="submit" name="Approve" value="Approve">-->
+<!--                <input type="submit" name="Reject" value="Reject">-->
+<!--            </form>-->
+<!--        </div>-->
         <a href="/report">Back to List</a>
     </div>
 </body>

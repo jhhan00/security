@@ -14,7 +14,9 @@
         var count = 0;
         function add() {
             var addedform = document.getElementById('field');
-            var str = "<input type=\"text\" class=\"form-control\" name=\"done" + count + " \" />";
+            var str =
+                "<label>Daily_Done</label>"+
+                "<input type=\"text\" class=\"form-control\" name=\"done" + count + " \" />";
             var div = document.createElement('div');
             div.id="added" + count;
             div.innerHTML = str;

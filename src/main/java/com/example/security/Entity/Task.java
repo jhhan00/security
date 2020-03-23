@@ -3,15 +3,13 @@ package com.example.security.Entity;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 
 @Data
 @Entity
 @Table(name="taskRtable")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
 
     private Long reportId;
@@ -22,4 +20,5 @@ public class Task {
     private String progress;
     private String done;
     private String achievement;
+    private String comment;
 }

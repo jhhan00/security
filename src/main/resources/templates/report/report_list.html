@@ -10,15 +10,34 @@
     <link rel="stylesheet" href="/bootstrap-grid.css">
     <link rel="stylesheet" href="/bootstrap-reboot.css">
     <link rel="stylesheet" type="text/css" href="/board.css">
+    <script>
+        function categoryChange(s) {
+            var category1 = ["Notice", "Daily", "Weekly", "Monthly", "Yearly"];
+            var category2 = ["Waiting", "Requested"];
+            var target = document.getElementById("select2")
+
+            var selected = "";
+            if(s.value == "type") selected=category1;
+            else if(s.value == "state") selected = category2;
+            target.options.length = 0;
+
+            for(x in selected) {
+                var opt = document.createElement("option");
+                opt.value = selected[x];
+                opt.innerHTML = selected[x];
+                target.appendChild(opt);
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <div>
             <a href="/">Main</a>
             <a href="/report">Report</a>
-            <div sec:authorize="isAuthenticated()">
+            <span sec:authorize="isAuthenticated()">
                 <a href="logout">LOG-OUT</a>
-            </div>
+            </span><br/>
             <span th:text="${authority.username}"></span>, Welcome!
             <span th:text="${authority.realName}"></span>
             <span th:text="${authority.role}"></span>
@@ -28,23 +47,34 @@
             <form method="get" action="/report/search">
                 <label>SEARCH</label>
                 <select name="type">
-                    <option selected>Select</option>
-                    <option value="username">Username</option>
-                    <option value="reportType">Report Type</option>
-                    <option value="condition">Report State</option>
+                    <option selected value="username">Username</option>
+                    <option value="reportTitle">Title</option>
                 </select>
                 <input type="text" class="form-control" name="search_info" />
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
         </div>
         <div class="t-r">
-            <a th:if="${authority.role} == 'ADMIN'" href="/report/create/notice">Notice</a>
+            <a th:if="${authority.role} == 'ADMIN'" class="btn btn-primary" href="/report/create/notice">Notice</a>
             <div th:unless="${authority.role} == 'ADMIN'">
-                <a href="/report/create/daily">Daily </a>
-                <a href="/report/create/weekly">Weekly </a>
-                <a href="/report/create/monthly">Monthly </a>
-                <a href="/report/create/project_goal">Project Goal </a>
+                <a class="btn btn-primary" href="/report/create/daily">Daily</a>
+                <a class="btn btn-primary" href="/report/create/weekly">Weekly</a>
+                <a class="btn btn-primary" href="/report/create/monthly">Monthly</a>
+                <a class="btn btn-primary" href="/report/create/project_goal">Project Goal</a>
             </div>
+        </div>
+        <div class="t-l">
+            <form method="get" action="/report/sorting">
+                <select name="Big" onchange="categoryChange(this)">
+                    <option selected>Select1</option>
+                    <option value="type">Type</option>
+                    <option value="state">State</option>
+                </select>
+                <select name="Small" id="select2">
+                    <option selected>Select2</option>
+                </select>
+                <input type="submit" value="sort"/>
+            </form>
         </div>
         <table class="table table-hover t-c">
             <thead>
@@ -61,17 +91,12 @@
             <tbody>
                 <tr th:each="report:${list}">
                     <td th:text="${report.reportId}"></td>
-                    <td th:if="${report.reportType} == 'Notice'" th:text="${report.reportType}" class="text-red"></td>
+                    <td th:if="${report.reportType} == 'Notice'" th:text="${report.reportType}" class="text-blue"></td>
                     <td th:unless="${report.reportType} == 'Notice'" th:text="${report.reportType}"></td>
                     <td th:text="${report.state}"></td>
-                    <td th:if="${report.reportType} == 'Notice'">
-                        <a th:href="${'/report/detail/' + report.reportId}" th:text="${report.simpleDate} + '_' + ${report.reportType}"></a>
-                    </td>
-                    <td th:unless="${report.reportType} == 'Notice'">
-                        <a th:href="${'/report/detail/' + report.reportId}" th:text="${report.simpleDate} + '_' + ${report.reportType} + '_Report'"></a>
-                    </td>
+                    <td><a th:href="${'/report/detail/' + report.reportId}" th:text="${report.reportTitle}"></a></td>
                     <td th:text="${report.username}"></td>
-                    <td th:text="${report.writeDate}"></td>
+                    <td th:text="${#temporals.format(report.writeDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
                     <!--<td th:text="${report.updatedTime}"></td>-->
                 </tr>
             </tbody>

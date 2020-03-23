@@ -7,7 +7,9 @@ import java.util.List;
 public interface ReportRepository extends JpaRepository<Report, Long> {
     Report findByReportId(long id);
     List<Report> findByReportTypeAndUsername(String rType, String username);
-    List<Report> findByUsernameStartsWith(String username);
-    List<Report> findByReportType(String type);
-    List<Report> findByState(String cond);
+    List<Report> findByUsernameStartsWithOrderByWriteDateDesc(String username);
+    List<Report> findByReportTitleContainingOrderByWriteDateDesc(String title);
+    List<Report> findAllByOrderByWriteDateDesc();
+    List<Report> findByReportTypeOrderByWriteDateDesc(String type);
+    List<Report> findByStateOrderByWriteDateDesc(String state);
 }

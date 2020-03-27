@@ -33,19 +33,25 @@
     </script>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Back</a>
+        </div>
+    </nav>
     <div class="container">
         <div>
-            <a href="/">Main</a>
-            <a href="/report">Back</a>
-            <div>
+<!--            <a href="/">Main</a>-->
+<!--            <a href="/report">Back</a>-->
+            <div class="t-c">
                 <span th:text="${authority.username}">username</span>, Welcome!
-                <span th:text="${authority.realName}">realname</span>
-                <span th:text="${authority.role}">role</span>
+<!--                <span th:text="${authority.realName}">realname</span>-->
+<!--                <span th:text="${authority.role}">role</span>-->
             </div>
         </div>
         <hr/>
         <div>
-            Create Notice!
+            <h5>Create Notice!</h5>
             <form th:object="${task}" method="post" action="/report/create/notice">
                 <div>
                     <h5><label>Notice</label></h5>

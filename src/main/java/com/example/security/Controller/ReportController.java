@@ -16,6 +16,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class ReportController {
 
     @GetMapping // report 전체보기
     public String reportList(Model model, Authentication auth) {
-        List<Report> list = reportRepository.findAllByOrderByWriteDateDesc();
+        List<Report> list = reportRepository.findAllByOrderByUpdatedTimeDesc();
         model.addAttribute("list",list);
 
         System.out.println(auth.getName() + " in report list");
@@ -47,15 +48,24 @@ public class ReportController {
 
     @GetMapping("/search") // report 검색해서 보기
     public String reportSearch(Authentication auth, Model model, @RequestParam("type")String type,
-                               @RequestParam("search_info")String info) {
+                               @RequestParam("search")String info) {
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
-        List<Report> rlist = null;
+        List<Report> rlist = new ArrayList<>();
         if(type.equals("username")) {
             rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(info);
         } else if(type.equals("reportTitle")) {
             rlist = reportRepository.findByReportTitleContainingOrderByWriteDateDesc(info);
+        } else if(type.equals("time")) {
+            log.info("Input Time : " + info);
+            List<Report> rl = reportRepository.findAllByOrderByUpdatedTimeDesc();
+            for(Report rp : rl) {
+                if(info.equals(rp.getWriteDate().toLocalDate().toString())) {
+                    log.info(rp.toString());
+                    rlist.add(rp);
+                }
+            }
         }
         model.addAttribute("list",rlist);
         return "report/report_list";
@@ -164,10 +174,10 @@ public class ReportController {
         if(idx != -1) tlist = taskRepository.findByReportId(idx);
         model.addAttribute("task", tlist);
 
-        boolean isValid = true;
+        boolean isValid = false;
         System.out.println("idx : " + idx);
-        if(idx == -1) isValid = false;
-        if(tlist != null && tlist.get(0).getProgress() == null) isValid=false;
+//        if(tlist != null)System.out.println(tlist.get(tlist.size()-1));
+        if(tlist != null && tlist.get(tlist.size()-1).getReportKind().equals("weekly_plan")) isValid=true;
         System.out.println("isValid : " + isValid);
         model.addAttribute("Valid",isValid);
 
@@ -184,20 +194,34 @@ public class ReportController {
         else if(request.getParameter(line).equals("after"))
             temp = "weekly_result";
 
+        List<Report> rlist = reportRepository.findByReportTypeAndUsername("Weekly",auth.getName());
+        long idx = -1;
+        if(rlist.size() != 0) idx = rlist.get(rlist.size()-1).getReportId();
+        log.info("idx = " + idx);
+
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
         String nowDate = now.format(dtf);
 
         //Report Save
-        Report report = new Report();
-        report.setUsername(auth.getName());
-        report.setReportType("Weekly");
-        report.setSimpleDate(nowDate);
-        report.setWriteDate(now);
-        report.setUpdatedTime(now);
-        report.setState("Waiting");
-        report.setReportTitle(nowDate + "_Weekly_Report");
-        System.out.println(report);
+        Report report;
+        if(temp.equals("weekly_plan")){
+            report = new Report();
+            report.setUsername(auth.getName());
+            report.setReportType("Weekly");
+            report.setSimpleDate(nowDate);
+            report.setWriteDate(now);
+            report.setUpdatedTime(now);
+            report.setState("Waiting");
+            report.setReportTitle(nowDate + "_Weekly_Report");
+            System.out.println(report);
+        } else {
+            report = reportRepository.findByReportId(idx);
+            report.setUpdatedTime(now);
+            report.setState("Waiting");
+            report.setReportTitle(nowDate + "_Weekly_Report");
+            System.out.println(report);
+        }
         reportRepository.save(report);
 
         System.out.println(report.getReportId());
@@ -216,9 +240,11 @@ public class ReportController {
                 task.setProgress(request.getParameter(key));
             } else { // Weekly Report의 끝인 경우
                 task.setDone(request.getParameter(key));
-                key = keys.nextElement();
-                task.setAchievement(request.getParameter(key));
             }
+            key = keys.nextElement();
+            task.setAchievement(request.getParameter(key));
+            key = keys.nextElement();
+            task.setComment(request.getParameter(key));
             System.out.println(task);
             taskRepository.save(task);
         }
@@ -231,8 +257,19 @@ public class ReportController {
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
+        List<Report> rlist = reportRepository.findByReportTypeAndUsername("Monthly", auth.getName());
+        System.out.println(rlist);
+        long idx = -1;
+        boolean isNull = true;
+        if(rlist.size() != 0) {
+            idx = rlist.get(rlist.size()-1).getReportId();
+            isNull = false;
+        }
+
         List<Task> tlist = null;
+        if(idx != -1) tlist = taskRepository.findByReportId(idx);
         model.addAttribute("task",tlist);
+        model.addAttribute("boolValue",isNull);
 
         return "report/create_monthly";
     }
@@ -262,10 +299,9 @@ public class ReportController {
 
         while(keys.hasMoreElements()) {
             String key = keys.nextElement();
-            log.info(key + " : " + request.getParameter(key));
             int loc1 = key.indexOf("done");
             int loc2 = key.indexOf("plan");
-            log.info("loc1 : " + loc1 + ", loc2 : " + loc2);
+            log.info(key + " : " + request.getParameter(key) + " -- loc1 : " + loc1 + ", loc2 : " + loc2);
             Task task = new Task();
             task.setReportId(r_id);
             task.setUsername(auth.getName());
@@ -274,12 +310,14 @@ public class ReportController {
             if(loc1 == 0) {
                 task.setReportKind("Done");
                 task.setDone(request.getParameter(key));
-                key = keys.nextElement();
-                task.setAchievement(request.getParameter(key));
             } else if(loc2 == 0) {
                 task.setReportKind("Next_Month_plan");
                 task.setProgress(request.getParameter(key));
             }
+            key = keys.nextElement();
+            task.setAchievement(request.getParameter(key));
+            key = keys.nextElement();
+            task.setComment(request.getParameter(key));
             System.out.println(task);
             taskRepository.save(task);
         }
@@ -325,7 +363,7 @@ public class ReportController {
             String key = keys.nextElement();
             log.info(key + " : " + request.getParameter(key));
             Task task = new Task();
-            int loc1 = key.indexOf("description");
+            int loc1 = key.indexOf("project");
             int loc2 = key.indexOf("milestone");
             task.setReportId(r_id);
             task.setUsername(auth.getName());
@@ -337,6 +375,8 @@ public class ReportController {
                 task.setReportKind("milestone");
             }
             task.setProgress(request.getParameter(key));
+            key = keys.nextElement();
+            task.setComment(request.getParameter(key));
             System.out.println(task);
             taskRepository.save(task);
         }
@@ -422,12 +462,10 @@ public class ReportController {
         return "redirect:/report/detail/" + id;
     }
 
-    @GetMapping("/request_mail")
+    @GetMapping("/request_state")
     public String reviewReport(@RequestParam("rId")String id, @RequestParam("username")String name) throws MessagingException {
         System.out.println("id : "+id);
         System.out.println("name : " + name);
-
-        EmailSendController es = new EmailSendController();
 
         Report rp = reportRepository.findByReportId(Long.parseLong(id));
         rp.setState("Requested");

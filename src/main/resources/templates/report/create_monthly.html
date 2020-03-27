@@ -13,13 +13,20 @@
     <script>
         var count1 = 0;
         var count2 = 0;
-        function month_result_add() {
-            var addedform = document.getElementById('month_result');
+        function month_result_add(k) {
+            var value = "";
+            if(k == 1) value = "month_result";
+            else if(k == 2) value = "another_result";
+            console.log(value);
+
+            var addedform = document.getElementById(value);
             var str =
                 "<label>Done </label>" +
-                "<input type='text' name='done" + count1 + "' />" +
+                "<input type='text' name='done_" + value + count1 + "' />" +
                 "<label> Achievement </label>" +
-                "<input type='text' placeholder='1~100 or text' name='achievement" + count1 +"'/>";
+                "<input type='number' placeholder='1~100' min='1' max='100' name='achievement_" + value + count1 +"'/><br/>" +
+                "<label>Comment</label><br/>" +
+                "<textarea type='text' placeholder='comment' cols='30' name='comment_" + value + count1 + "'></textarea>";
             var div = document.createElement('div');
             div.id="Added_done" + count1;
             div.innerHTML = str;
@@ -27,18 +34,26 @@
 
             count1++; console.log(count1);
         }
-        function month_result_delete() {
+        function month_result_delete(k) {
+            var value = "";
+            if(k == 1) value = "month_result";
+            else if(k == 2) value = "another_result";
+
             console.log(count1);
             if(count1 > 1) {
                 var addedDiv = document.getElementById("Added_done" + (--count1));
-                document.getElementById('month_result').removeChild(addedDiv);
+                document.getElementById(value).removeChild(addedDiv);
             }
         }
         function next_month_add() {
             var addedform = document.getElementById('next_month');
             var str =
                 "<label>Plan</label>" +
-                "<input type='text' placeholder='next_month_plan" + count2 + "' name='plan" + count2 + "' />";
+                "<input type='text' placeholder='next_month_plan" + count2 + "' name='plan" + count2 + "' />" +
+                "<label>Expected Achievement</label>" +
+                "<input type='number' placeholder='1~100' min='1' max='100' name='expected_achievement" + count2 + "'/><br/>" +
+                "<label>Description</label><br/>" +
+                "<textarea type='text' placeholder='Description' cols='30' name='description" + count2 + "'></textarea>";
             var div = document.createElement('div');
             div.id="Added_plan" + count2;
             div.innerHTML = str;
@@ -56,32 +71,51 @@
     </script>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Back</a>
+        </div>
+    </nav>
     <div class="container">
         <div>
-            <a href="/">Main</a>
-            <a href="/report">Back</a>
-            <div>
+            <div class="t-c">
                 <span th:text="${authority.username}">username</span>, Welcome!
-                <span th:text="${authority.realName}">realname</span>
-                <span th:text="${authority.role}">role</span>
+<!--                <span th:text="${authority.realName}">realname</span>-->
+<!--                <span th:text="${authority.role}">role</span>-->
             </div>
         </div>
         <hr/>
-        Create Monthly
+        <h5>Create Monthly</h5>
         <div>
             <form th:object="${task}" method="post" action="/report/create/monthly">
-                <div>
+                <div th:if="${boolValue} == true">
                     <label>This Month</label>
                     <div id="month_result"></div>
-                    <input type="button" value="Add" onclick="month_result_add()"/>
-                    <input type="button" value="Delete" onclick="month_result_delete()"/>
+                    <input type="button" value="Add" onclick="month_result_add(1)"/>
+                    <input type="button" value="Delete" onclick="month_result_delete(1)"/>
                 </div>
+                <div th:unless="${boolValue} == true">
+                    <div th:each="plan, i:${task}">
+                        <div th:unless="${plan.progress} == null">
+                            <label>Done</label>
+                            <input type="text" th:name="${'done'+i.index}" th:value="${plan.progress}"/>
+                            <label>Achievement</label>
+                            <input type="number" placeholder="1~100" max="100" min="1" th:name="${'achievement'+i.index}"/><br/>
+                            <label>Comment</label><br/>
+                            <textarea type="text" cols="30" placeholder="comment" th:name="${'comment'+i.index}"></textarea>
+                        </div>
+                    </div>
+                    <div id="another_result"></div>
+                    <input type="button" value="Add" onclick="month_result_add(2)"/>
+                    <input type="button" value="Delete" onclick="month_result_delete(2)"/>
+                </div><br/>
                 <div>
                     <label>Next Month</label>
                     <div id="next_month"></div>
                     <input type="button" value="Add" onclick="next_month_add()"/>
                     <input type="button" value="Delete" onclick="next_month_delete()"/>
-                </div>
+                </div><br/>
                 <button class="btn btn-primary" type="submit">Submit</button>
             </form>
         </div>

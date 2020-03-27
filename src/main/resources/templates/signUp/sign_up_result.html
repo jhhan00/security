@@ -5,12 +5,15 @@
 <head>
     <meta charset="UTF-8">
     <title>회원가입 결과</title>
-    <link rel="stylesheet" href="/board.css">
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
 </head>
 <body>
     <h2 class="t-c">회원가입 결과여부</h2>
-    <span th:text="${ID}"></span>님
-    <div class="t-c">
+    <div class="t-c container">
+        <span th:text="${ID}"></span>님
         <p th:text="${resultMSG}"></p>
         <p th:unless="${isSuccess}">
             <a href="/signUp">회원가입</a>
@@ -19,7 +22,7 @@
         <div th:if="${isSuccess}">
             <form action="/request" method="get">
                 <input type="hidden" th:value="${ID}" name="UserId"/>
-                <button type="submit">인증하기</button>
+                <input type="submit" class="btn btn-primary" value="인증하기"/>
             </form>
         </div>
     </div>

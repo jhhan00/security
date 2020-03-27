@@ -5,9 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Certification Result</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
 </head>
 <body>
-    <div>
+    <div class="container t-c">
         <div th:text="${UserId}"></div>
         <p th:text="${msg}"></p>
         <div th:if="${isSuccess}">

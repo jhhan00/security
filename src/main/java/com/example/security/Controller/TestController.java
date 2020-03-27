@@ -34,7 +34,10 @@ public class TestController {
     }
 
     @GetMapping("/changePW")
-    public String ChangePassword() {
+    public String ChangePassword(Authentication auth, Model model) {
+        String username = auth.getName();
+        model.addAttribute("name",username);
+
         return "Log_Related/change_password";
     }
 
@@ -55,6 +58,9 @@ public class TestController {
         if(!passwordEncoder.matches(now_pw, DB_pw)) { // now_password and DB_password is not equal
             isSuccess = false;
             msg += "Current_Password is not correct. ";
+        } if(now_pw.equals(new_pw)) { // new_password and now_password is equal
+            isSuccess = false;
+            msg += "New_Password should not be equal to Current_Password. ";
         } if(!new_pw.equals(check_pw)) { // new_password and new_password_check is not equal
             isSuccess = false;
             msg += "New_Password and New_Password_Check is not equal. ";

@@ -16,8 +16,10 @@
         function description_add() {
             var addedform = document.getElementById('descriptions');
             var str =
-                "<label>Description</label>" +
-                "<input type='text' class='form-control' name='description" + dscr_count + "' placeholder='project description" + dscr_count + "'/>";
+                "<label>Project Name</label>" +
+                "<input type='text' class='form-control' name='project" + dscr_count + "' placeholder='project description" + dscr_count + "'/>" +
+                "<label>Description</label><br/>" +
+                "<textarea type='text' cols='30' placeholder='description' name='project_description" + dscr_count + "'></textarea>";
             var div = document.createElement('div');
             div.id="Description" + dscr_count;
             div.innerHTML = str;
@@ -36,7 +38,9 @@
             var addedform = document.getElementById('milestones');
             var str =
                 "<label>Milestone</label>" +
-                "<input type='text' class='form-control' name='milestone" + milestone_count + "' placeholder='milestone" + milestone_count + "'/>";
+                "<input type='text' class='form-control' name='milestone" + milestone_count + "' placeholder='milestone" + milestone_count + "'/>" +
+                "<label>Description</label><br/>" +
+                "<textarea type='text' cols='30' placeholder='description' name='milestone_description" + milestone_count + "'></textarea>";
             var div = document.createElement('div');
             div.id = "Milestone" + milestone_count;
             div.innerHTML = str;
@@ -54,18 +58,24 @@
     </script>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Back</a>
+        </div>
+    </nav>
     <div class="container">
         <div>
-            <a href="/">Main</a>
-            <a href="/report">Back</a>
-            <div>
+<!--            <a href="/">Main</a>-->
+<!--            <a href="/report">Back</a>-->
+            <div class="t-c">
                 <span th:text="${authority.username}">username</span>, Welcome!
-                <span th:text="${authority.realName}">realname</span>
-                <span th:text="${authority.role}">role</span>
+<!--                <span th:text="${authority.realName}">realname</span>-->
+<!--                <span th:text="${authority.role}">role</span>-->
             </div>
         </div>
         <hr/>
-        Project Goal Writing!
+        <h5>Project Goal Writing!</h5>
         <div>
             <form th:object="${task}" method="post" action="/report/create/project_goal">
                 <div>
@@ -73,13 +83,13 @@
                     <div id="descriptions"></div>
                     <input type="button" value="Add" onclick="description_add()"/>
                     <input type="button" value="Delete" onclick="description_delete()"/>
-                </div>
+                </div><br/>
                 <div>
                     <label>Milestones</label>
                     <div id="milestones"></div>
                     <input type="button" value="Add" onclick="milestone_add()"/>
                     <input type="button" value="Delete" onclick="milestone_delete()"/>
-                </div>
+                </div><br/>
                 <button class="btn btn-primary" type="submit">Submit</button>
             </form>
         </div>

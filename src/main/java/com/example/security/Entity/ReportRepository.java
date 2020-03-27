@@ -9,7 +9,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByReportTypeAndUsername(String rType, String username);
     List<Report> findByUsernameStartsWithOrderByWriteDateDesc(String username);
     List<Report> findByReportTitleContainingOrderByWriteDateDesc(String title);
-    List<Report> findAllByOrderByWriteDateDesc();
+    List<Report> findAllByOrderByUpdatedTimeDesc();
     List<Report> findByReportTypeOrderByWriteDateDesc(String type);
     List<Report> findByStateOrderByWriteDateDesc(String state);
 }

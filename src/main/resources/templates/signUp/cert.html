@@ -5,13 +5,19 @@
 <head>
     <meta charset="UTF-8">
     <title>Certification</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
 </head>
 <body>
-    <p th:text="${UserId}"></p>
-    <form action="/request_check" method="post">
-        <input type="hidden" th:value="${UserId}" name="UserId"/>
-        <input type="text" placeholder="Input Number" name="check_number" /><br/>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="container t-c">
+        <p th:text="${UserId}"></p>
+        <form action="/request_check" method="post">
+            <input type="hidden" th:value="${UserId}" name="UserId"/>
+            <input type="text" placeholder="Input Number" name="check_number" /><br/>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 </body>
 </html>

@@ -32,8 +32,12 @@
         function plan_add() {
             var addedform = document.getElementById('plan_div');
             var str =
-                "<lable>Weekly_Plan</lable>"+
-                "<input type=\"text\" class=\"form-control\" name=\"plan" + count + "\"/>";
+                "<label>Weekly_Plan</label>"+
+                "<input type=\"text\" name=\"plan" + count + "\"/>" +
+                "<label>Expected Achievement</label>" +
+                "<input type='number' placeholder='1~100' min='1' max='100' name='achievement" + count + "'/><br/>" +
+                "<label>Description</label><br/>" +
+                "<textarea type='text' placeholder='Description about your plan' cols='30' name='comment" + count + "'></textarea>";
             var div = document.createElement('div');
             div.id="plan" + count;
             div.innerHTML = str;
@@ -48,21 +52,50 @@
                 document.getElementById('plan_div').removeChild(addedDiv);
             }
         }
+
+        var check = 0;
+        function result_add() {
+            var addedform = document.getElementById('result_div');
+            var str =
+                "<label>Other Result</label>" +
+                "<input type='text' name='result" + check + "'/>" +
+                "<label>Achievement</label>" +
+                "<input type='number' placeholder='1~100' min='1' max='100' name='achievement" + check + "'/><br/>" +
+                "<label>Comment</label><br/>" +
+                "<textarea type='text' placeholder='comment' cols='30' name='description" + check + "'></textarea>";
+            var div = document.createElement('div');
+            div.id="result" + check;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            check++; console.log(check);
+        }
+        function result_delete() {
+            console.log(check);
+            if(check > 1) {
+                var addedDiv = document.getElementById(("result" + (--check)));
+                document.getElementById('result_div').removeChild(addedDiv);
+            }
+        }
     </script>
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Back</a>
+        </div>
+    </nav>
     <div class="container">
         <div>
-            <a href="/">Main</a>
-            <a href="/report">Back</a>
-            <div>
+            <div class="t-c">
                 <span th:text="${authority.username}">username</span>, Welcome!
-                <span th:text="${authority.realName}">realname</span>
-                <span th:text="${authority.role}">role</span>
+<!--                <span th:text="${authority.realName}">realname</span>-->
+<!--                <span th:text="${authority.role}">role</span>-->
             </div>
         </div>
         <hr/>
-        create weekly
+        <h5>create weekly</h5>
         <div>
             <div>
                 <label><input type="radio" name="select" value="plan" checked="checked"> weekly_plan</label>
@@ -76,7 +109,7 @@
                         <div id="plan_div"></div>
                         <input type="button" value="Add" onclick="plan_add()"/>
                         <input type="button" value="Delete" onclick="plan_delete()"/>
-                    </div>
+                    </div><br/>
                     <div th:if="${Valid} == false">
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </div>
@@ -91,9 +124,17 @@
                             <label>Progress</label>
                             <input type="text" th:name="${'plan'+i.index}" th:value="${plan.progress}">
                             <label>Achievement</label>
-                            <input type="text" placeholder="1~100 or text" th:name="${'achieve'+i.index}"/>
+                            <input type="number" min="1" max="100" th:name="${'achieve'+i.index}" th:value="${plan.achievement}"/><br/>
+                            <label>Comment</label><br/>
+                            <textarea type="text" placeholder="comment" cols="30" th:name="${'comment'+i.index}"></textarea>
                         </div>
                     </div>
+                    <div>
+                        <div id="result_div"></div>
+                        <input type="button" value="Add" onclick="result_add()"/>
+                        <input type="button" value="Delete" onclick="result_delete()"/>
+                    </div>
+                    <br/>
                     <div th:if="${Valid} == true">
                         <button class="btn btn-primary" type="submit">Submit</button>
                     </div>

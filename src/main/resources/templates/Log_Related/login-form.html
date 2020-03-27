@@ -3,37 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Please LogIn</title>
-    <link rel="stylesheet" href="/board.css">
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
 </head>
 <body>
-    <div th:fragment="content">
-        <a href="/">Main</a>
-        <a href="/report">ReportSystem</a>
-        <a href="/board">게시판</a>
-        <a href="/signUp">SignUp</a>
-
-        <form name="f" th:action="@{/login}" method="post">
-            <fieldset>
-                <legend>Please LogIn</legend>
-                <div th:if="${param.error}" class="alert alert-error">
-                    <strong>Username should be end with '@pharmcadd.com'. Check your Username and Password.</strong>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/signUp">SignUp</a>
+        </div>
+    </nav>
+    <div class="container" style="padding: 20px">
+<!--        <div class="t-r">-->
+<!--            <a href="/">Main</a>-->
+<!--            <a href="/signUp">SignUp</a>-->
+<!--        </div>-->
+        <div style="padding-left: 190px">
+            <div class="align-items-center card border-white w-75">
+                <div class="t-c" style="padding-top: 20px"><a href="/login"><img src="/img/pc.PNG"/></a></div>
+                <div th:if="${param.error}" class="text-danger t-c">
+                    <strong>Username should be end with '@pharmcadd.com'.<br/>Check your Username and Password.</strong>
                 </div>
-                <div th:if="${param.logout}" class="alert alert-error">
+                <div th:if="${param.logout}" class="text-danger">
                     You have been logged out.
                 </div>
-                <label for="username">UserName</label>
-                <div>
-                    <input type="text" id="username" name="username" /><br/>
-                </div>
-                <label for="password">Password </label>
-                <div>
-                    <input type="password" id="password" name="password" />
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn">LogIn</button>
-                </div>
-            </fieldset>
-        </form>
+                <form name="f" th:action="@{/login}" method="post">
+                    <div class="form-group">
+                        <label for="username">UserName</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="XXX@pharmcadd.com"/>
+                        <label for="password">Password </label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="password"/>
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block">LogIn</button>
+                    </div>
+                </form>
+    <!--            <div class="form-group">-->
+    <!--                <form method="get" action="/signUp">-->
+    <!--                    <input type="submit" class="btn btn-primary btn-block" value="SignUp"/>-->
+    <!--                </form>-->
+    <!--            </div>-->
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -10,10 +10,22 @@
     <link rel="stylesheet" href="/bootstrap-grid.css">
     <link rel="stylesheet" href="/bootstrap-reboot.css">
     <link rel="stylesheet" type="text/css" href="/board.css">
-    <script>
+
+    <script src="/js/jquery.js"></script>
+    <script src="/js/jquery-ui.js"></script>
+    <link rel="stylesheet" href="/js/jquery-ui.css">
+
+    <script src="/js/jquery_DataTables.min.js"></script>
+    <link rel="stylesheet" href="/js/jquery_DataTables.min.css">
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#table").DataTable()
+        });
+
         function categoryChange(s) {
             var category1 = ["Notice", "Daily", "Weekly", "Monthly", "Yearly"];
-            var category2 = ["Waiting", "Requested"];
+            var category2 = ["Waiting", "Requested", "Approved"];
             var target = document.getElementById("select2")
 
             var selected = "";
@@ -28,32 +40,69 @@
                 target.appendChild(opt);
             }
         }
+
+        var count=1;
+        function inputBoxChange(s) {
+            if(count == 1) {
+                var target = document.getElementById("searching");
+                document.getElementById('result').removeChild(target);
+                count--;
+            }
+            var selected = "";
+            if(s.value == "username") selected = "Username";
+            else if(s.value == "reportTitle") selected = "Report Title";
+            else if(s.value == "time") selected = "ex) 2020-01-01";
+
+            count++;
+            var tg = document.getElementById("result");
+            var inp = document.createElement("input");
+            inp.placeholder = selected;
+            inp.type = "text";
+            inp.name = "search";
+            inp.id = "searching";
+            tg.appendChild(inp);
+
+            if(s.value=="time") {
+                $(function() {
+                    $("#searching").datepicker({
+                        dateFormat: 'yy-mm-dd'
+                    });
+                });
+            }
+        }
     </script>
 </head>
 <body>
-    <div class="container">
-        <div>
-            <a href="/">Main</a>
-            <a href="/report">Report</a>
-            <span sec:authorize="isAuthenticated()">
-                <a href="logout">LOG-OUT</a>
-            </span><br/>
-            <span th:text="${authority.username}"></span>, Welcome!
-            <span th:text="${authority.realName}"></span>
-            <span th:text="${authority.role}"></span>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Report</a>
+            <a class="navbar-brand" href="logout">LOG-OUT</a>
+        </div>
+    </nav>
+    <div class="container" style="padding: 10px">
+        <div class="t-c">
+            <h4><span th:text="${authority.username}"></span>, Welcome!</h4>
+<!--            <br/><span th:text="${authority.realName}"></span>-->
+<!--            <span th:text="${authority.role}"></span>-->
         </div>
         <br/>
         <div>
             <form method="get" action="/report/search">
                 <label>SEARCH</label>
-                <select name="type">
-                    <option selected value="username">Username</option>
+                <select name="type" onchange="inputBoxChange(this)">
+                    <option selected>Choose</option>
+                    <option value="username">Username</option>
                     <option value="reportTitle">Title</option>
+                    <option value="time">writeDate</option>
                 </select>
-                <input type="text" class="form-control" name="search_info" />
-                <button type="submit" class="btn btn-primary">Search</button>
+                <div id="result">
+                    <input type="text" name="search" id="searching" placeholder="Select"/>
+                </div>
+                <button type="submit" class="btn btn-info">Search</button>
             </form>
         </div>
+
         <div class="t-r">
             <a th:if="${authority.role} == 'ADMIN'" class="btn btn-primary" href="/report/create/notice">Notice</a>
             <div th:unless="${authority.role} == 'ADMIN'">
@@ -76,7 +125,7 @@
                 <input type="submit" value="sort"/>
             </form>
         </div>
-        <table class="table table-hover t-c">
+        <table id="table" class="table table-hover t-c">
             <thead>
                 <tr>
                     <th>No.</th>
@@ -85,7 +134,7 @@
                     <th>title</th>
                     <th>UserName</th>
                     <th>Create_Date</th>
-                    <!--<th>Last_Update</th>-->
+                    <th>Last_Update</th>
                 </tr>
             </thead>
             <tbody>
@@ -97,7 +146,7 @@
                     <td><a th:href="${'/report/detail/' + report.reportId}" th:text="${report.reportTitle}"></a></td>
                     <td th:text="${report.username}"></td>
                     <td th:text="${#temporals.format(report.writeDate, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                    <!--<td th:text="${report.updatedTime}"></td>-->
+                    <td th:text="${#temporals.format(report.updatedTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
                 </tr>
             </tbody>
         </table>

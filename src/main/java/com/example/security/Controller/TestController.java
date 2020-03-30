@@ -18,8 +18,8 @@ public class TestController {
     SimpleUserDao sud;
 
     @RequestMapping("/")
-    public String home(ModelAndView mav) {
-        return "Log_Related/home";
+    public String home() {
+        return "Log_Related/login-form";
     }
 
     @ResponseBody

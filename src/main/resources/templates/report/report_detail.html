@@ -49,14 +49,14 @@
                     <thead>
                         <tr>
                             <th>Progress</th>
-                            <th>Expected Achievement</th>
+                            <th>Expected_Achievement</th>
                             <th>Description</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="view:${list}" th:if="${view.reportKind} == 'weekly_plan'">
                             <td th:text="${view.progress}" class="col-sm-4"></td>
-                            <td th:text="${view.achievement} + '%'" class="col-sm-3"></td>
+                            <td th:text="${view.expectedAchievement} + '%'" class="col-sm-3"></td>
                             <td th:text="${view.comment}" class="col-sm-5"></td>
                         </tr>
                     </tbody>
@@ -72,8 +72,18 @@
                     </thead>
                     <tbody>
                         <tr th:each="view, i:${list}" th:if="${view.reportKind} == 'weekly_result'">
-                            <td th:text="${view.done} + ${i.size}" class="col-sm-4"></td>
-                            <td th:text="${view.achievement} + '%'" class="col-sm-3"></td>
+                            <td th:text="${view.done}" class="col-sm-4"></td>
+                            <td th:if="${view.expectedAchievement} == null" class="col-sm-3">
+                                <span th:text="${view.realAchievement}+'%'"></span>
+                            </td>
+                            <td th:unless="${view.expectedAchievement} == null" class="col-sm-3">
+                                <span class="text-blue"
+                                      th:if="${view.realAchievement} > ${view.expectedAchievement}" th:text="${view.realAchievement}+'%'"></span>
+                                <span
+                                      th:if="${view.realAchievement} == ${view.expectedAchievement}" th:text="${view.realAchievement}+'%'"></span>
+                                <span class="text-red"
+                                      th:if="${view.realAchievement} < ${view.expectedAchievement}" th:text="${view.realAchievement}+'%'"></span>
+                            </td>
                             <td th:text="${view.comment}" class="col-sm-5"></td>
                         </tr>
                     </tbody>
@@ -92,7 +102,7 @@
                     <tbody>
                         <tr th:each="view:${list}" th:if="${view.reportKind} == 'Done'">
                             <td th:text="${view.done}" class="col-sm-4"></td>
-                            <td th:text="${view.achievement} + '%'" class="col-sm-3"></td>
+                            <td th:text="${view.realAchievement} + '%'" class="col-sm-3"></td>
                             <td th:text="${view.comment}" class="col-sm-5"></td>
                         </tr>
                     </tbody>
@@ -102,14 +112,14 @@
                     <thead>
                     <tr>
                         <th>Progress</th>
-                        <th>Expected Achievement</th>
+                        <th>Expected_Achievement</th>
                         <th>Description</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="view:${list}" th:if="${view.reportKind} == 'Next_Month_plan'">
                         <td th:text="${view.progress}" class="col-sm-4"></td>
-                        <td th:text="${view.achievement} + '%'" class="col-sm-3"></td>
+                        <td th:text="${view.expectedAchievement} + '%'" class="col-sm-3"></td>
                         <td th:text="${view.comment}" class="col-sm-5"></td>
                     </tr>
                     </tbody>

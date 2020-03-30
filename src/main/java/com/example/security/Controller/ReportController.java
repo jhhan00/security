@@ -39,7 +39,7 @@ public class ReportController {
         List<Report> list = reportRepository.findAllByOrderByUpdatedTimeDesc();
         model.addAttribute("list",list);
 
-        System.out.println(auth.getName() + " in report list");
+        //System.out.println(auth.getName() + " in report list");
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -91,7 +91,7 @@ public class ReportController {
 
     @GetMapping("/detail/{reportId}") // report 상세보기
     public String reportView(@PathVariable("reportId") long reportid, Model model, Authentication auth) {
-        System.out.println(reportid + ". " + auth.getName() + " in detail");
+        //System.out.println(reportid + ". " + auth.getName() + " in detail");
 
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority",authority);
@@ -197,7 +197,7 @@ public class ReportController {
         List<Report> rlist = reportRepository.findByReportTypeAndUsername("Weekly",auth.getName());
         long idx = -1;
         if(rlist.size() != 0) idx = rlist.get(rlist.size()-1).getReportId();
-        log.info("idx = " + idx);
+        System.out.println("idx = " + idx);
 
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -238,11 +238,19 @@ public class ReportController {
             task.setReportKind(temp);
             if(temp.equals("weekly_plan")) { // Weekly Report의 시작인 경우
                 task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                task.setExpectedAchievement(request.getParameter(key));
             } else { // Weekly Report의 끝인 경우
                 task.setDone(request.getParameter(key));
+                Task t1 = taskRepository.findByReportIdAndProgress(r_id,task.getDone());
+                System.out.println("t1 : " + t1);
+                if(t1 != null) {
+                    System.out.println("Right Now ExpectedAchievement : " + t1.getExpectedAchievement());
+                    task.setExpectedAchievement(t1.getExpectedAchievement());
+                }
+                key = keys.nextElement();
+                task.setRealAchievement(request.getParameter(key));
             }
-            key = keys.nextElement();
-            task.setAchievement(request.getParameter(key));
             key = keys.nextElement();
             task.setComment(request.getParameter(key));
             System.out.println(task);
@@ -310,12 +318,14 @@ public class ReportController {
             if(loc1 == 0) {
                 task.setReportKind("Done");
                 task.setDone(request.getParameter(key));
+                key = keys.nextElement();
+                task.setRealAchievement(request.getParameter(key));
             } else if(loc2 == 0) {
                 task.setReportKind("Next_Month_plan");
                 task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                task.setExpectedAchievement(request.getParameter(key));
             }
-            key = keys.nextElement();
-            task.setAchievement(request.getParameter(key));
             key = keys.nextElement();
             task.setComment(request.getParameter(key));
             System.out.println(task);

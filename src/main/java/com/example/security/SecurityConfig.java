@@ -26,7 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .formLogin().loginPage("/login").failureUrl("/login?error").permitAll()
-                .defaultSuccessUrl("/")
+                .defaultSuccessUrl("/report")
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .addLogoutHandler(new TaskImplementingLogoutHandler()).permitAll().logoutSuccessUrl("/login?logout");

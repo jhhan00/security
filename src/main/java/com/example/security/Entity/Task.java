@@ -19,6 +19,7 @@ public class Task {
     private String reportKind;
     private String progress;
     private String done;
-    private String achievement;
+    private String expectedAchievement;
+    private String realAchievement;
     private String comment;
 }

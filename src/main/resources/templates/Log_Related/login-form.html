@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
     <meta charset="UTF-8">
     <title>Please LogIn</title>
@@ -11,15 +13,20 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="/">Main</a>
-            <a class="navbar-brand" href="/signUp">SignUp</a>
+            <a class="navbar-brand" href="/report">ReportSystem</a>
+            <a class="navbar-brand" sec:authorize="!isAuthenticated()" href="/signUp">SignUp</a>
+            <a class="navbar-brand" sec:authorize="!isAuthenticated()" href="login">LOG-IN</a>
+            <a class="navbar-brand" sec:authorize="isAuthenticated()" href="/changePW">ChangePW </a>
+            <a class="navbar-brand" sec:authorize="isAuthenticated()" href="logout">LOG-OUT </a>
         </div>
     </nav>
-    <div class="container" style="padding: 20px">
-<!--        <div class="t-r">-->
-<!--            <a href="/">Main</a>-->
-<!--            <a href="/signUp">SignUp</a>-->
-<!--        </div>-->
+    <div sec:authorize="isAuthenticated()" class="t-c" style="padding-top: 20px">
+        <p style="padding-top: 30px"><a href="/"><img src="/img/image.PNG"/></a></p>
+        <div sec:authorize="isAuthenticated()">
+            <h5><span sec:authentication="name"></span>, Welcome!</h5>
+        </div>
+    </div>
+    <div sec:authorize="!isAuthenticated()" class="container" style="padding: 20px">
         <div style="padding-left: 190px">
             <div class="align-items-center card border-white w-75">
                 <div class="t-c" style="padding-top: 20px"><a href="/login"><img src="/img/pc.PNG"/></a></div>
@@ -40,11 +47,6 @@
                         <button type="submit" class="btn btn-primary btn-block">LogIn</button>
                     </div>
                 </form>
-    <!--            <div class="form-group">-->
-    <!--                <form method="get" action="/signUp">-->
-    <!--                    <input type="submit" class="btn btn-primary btn-block" value="SignUp"/>-->
-    <!--                </form>-->
-    <!--            </div>-->
             </div>
         </div>
     </div>

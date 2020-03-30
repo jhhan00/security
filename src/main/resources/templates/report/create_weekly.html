@@ -124,7 +124,7 @@
                             <label>Progress</label>
                             <input type="text" th:name="${'plan'+i.index}" th:value="${plan.progress}">
                             <label>Achievement</label>
-                            <input type="number" min="1" max="100" th:name="${'achieve'+i.index}" th:value="${plan.achievement}"/><br/>
+                            <input type="number" min="1" max="100" th:name="${'achieve'+i.index}" th:value="${plan.expectedAchievement}"/><br/>
                             <label>Comment</label><br/>
                             <textarea type="text" placeholder="comment" cols="30" th:name="${'comment'+i.index}"></textarea>
                         </div>

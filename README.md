@@ -127,3 +127,5 @@ __No.__, __type__, __state__, __title__, __Username__, __Create_Date__, __Last_U
 State은 리포트 리스트에서 확인할 수 있습니다.
 
 현재는 Waiting과 Requested만 가능합니다.
+
+관리자는 state가 Requested 상태로 되어있는 리포트만을 확인한다.

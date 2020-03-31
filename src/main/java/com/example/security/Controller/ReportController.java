@@ -474,13 +474,23 @@ public class ReportController {
 
     @GetMapping("/request_state")
     public String reviewReport(@RequestParam("rId")String id, @RequestParam("username")String name) throws MessagingException {
-        System.out.println("id : "+id);
-        System.out.println("name : " + name);
-
         Report rp = reportRepository.findByReportId(Long.parseLong(id));
         rp.setState("Requested");
         reportRepository.save(rp);
 
         return "redirect:/report/detail/" + id;
+    }
+
+    @PostMapping("/delete")
+    public String deleteReport(@RequestParam("reportID")String id) {
+        long r_id = Long.parseLong(id);
+        List<Task> tlist = taskRepository.findByReportId(r_id);
+        for(Task t : tlist) {
+            taskRepository.delete(t);
+        }
+        Report r = reportRepository.findByReportId(r_id);
+        reportRepository.delete(r);
+
+        return "redirect:/report";
     }
 }

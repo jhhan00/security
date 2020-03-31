@@ -77,7 +77,7 @@
                                 <span th:text="${view.realAchievement}+'%'"></span>
                             </td>
                             <td th:unless="${view.expectedAchievement} == null" class="col-sm-3">
-                                <span class="text-blue"
+                                <span class="text-green"
                                       th:if="${view.realAchievement} > ${view.expectedAchievement}" th:text="${view.realAchievement}+'%'"></span>
                                 <span
                                       th:if="${view.realAchievement} == ${view.expectedAchievement}" th:text="${view.realAchievement}+'%'"></span>
@@ -165,15 +165,15 @@
             </div>
         </div>
         <br/><hr/>
-        <div th:if="${authority.username} == ${info.username} and ${info.state} == 'Waiting' or ${info.state} == 'Rejected'">
-            <a>Modify</a>
-            <a>Delete</a>
-        </div>
-        <div th:if="${authority.username} == ${info.username} and ${info.state}=='Waiting'">
+        <div th:if="${authority.username} == ${info.username} and ${info.state} == 'Waiting' or ${info.state} == 'Rejected'" class="row p-l-15">
+            <form method="post" action="/report/delete">
+                <input type="hidden" name="reportID" th:value="${info.reportId}"/>
+                <input type="submit" class="btn btn-dark" value="Delete"/>
+            </form>
             <form action="/report/request_state" method="get">
                 <input type="hidden" name="rId" th:value="${info.reportId}"/>
                 <input type="hidden" name="username" th:value="${info.username}"/>
-                <input type="submit" value="Request"/>
+                <input type="submit" class="btn btn-info" value="Request"/>
             </form>
         </div>
 <!--        <div th:if="${authority.role} == 'ADMIN' and ${info.state} == 'Requested'">-->

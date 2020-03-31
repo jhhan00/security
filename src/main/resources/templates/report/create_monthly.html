@@ -99,7 +99,7 @@
                     <div th:each="plan, i:${task}">
                         <div th:unless="${plan.progress} == null">
                             <label>Done</label>
-                            <input type="text" th:name="${'done'+i.index}" th:value="${plan.progress}"/>
+                            <input type="text" th:name="${'done'+i.index}" th:value="${plan.progress}" readonly/>
                             <label>Achievement</label>
                             <input type="number" placeholder="1~100" max="100" min="1" th:name="${'achievement'+i.index}"/><br/>
                             <label>Comment</label><br/>

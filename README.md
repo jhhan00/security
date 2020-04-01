@@ -7,7 +7,7 @@
 
 아이디가 없을 경우 **SignUp**버튼을 통해 회원가입을 합니다.
 
-##SignUp
+## SignUp
 
 **아이디(username)** 은 본인 이메일을 적으셔야 합니다. 나중에 이 이메일로 인증을 진행할 것입니다.
 
@@ -25,18 +25,18 @@
 
 그 후 로그인을 하시면 리포트 리스트를 볼 수 있는 페이지가 등장합니다.
 
-##Change Password(비밀번호 변경)
+## Change Password(비밀번호 변경)
 
 리포트 리스트를 볼 수 있는 페이지에서 __Main__ 을 클릭하시고 다음 __ChangePW__ 를 클릭하시면 비밀번호를 변경할 수 있습니다.
 
 
-##Report create
+## Report create
 
 우측에 Daily, Weekly, Monthly, Yearly 버튼이 있을 겁니다.
 
 각각 일일, 주간, 월간, 연간 리포트를 제출하는 버튼입니다.
 
-###Daily(일일)
+### Daily(일일)
 
 Add와 Delete 버튼을 통해 추가하거나 삭제할 수 있습니다.
 
@@ -44,7 +44,7 @@ Add와 Delete 버튼을 통해 추가하거나 삭제할 수 있습니다.
 
 그 날 한일에 대해 작성한 후 Submit 버튼을 누르면 Report가 등록이 됩니다.
 
-###Weekly(주간)
+### Weekly(주간)
 
 Add와 Delete 버튼을 통해 추가하거나 삭제할 수 있습니다.
 
@@ -70,7 +70,7 @@ weekly_result를 쓸 때는 이번 주 성과에 대해
 
 또한 추가된 사항이 있으면 Add 버튼을 눌러 수행된 내용에 대해 작성하시면 됩니다.
 
-###Monthly(월간)
+### Monthly(월간)
 
 Add와 Delete 버튼을 통해 추가하거나 삭제할 수 있습니다.
 
@@ -86,7 +86,7 @@ __한일__ 과 __다음 달 계획__ 을 모두 작성하셔야 합니다.
 
 __다음 달 계획__ 부분은 본인의 다음 달 계획에 대해 쓰시면 됩니다.
 
-###Project Goal(연간)
+### Project Goal(연간)
 
 Add와 Delete 버튼을 통해 추가하거나 삭제할 수 있습니다.
 
@@ -96,7 +96,7 @@ __프로젝트__ 와 __마일스톤__ 을 모두 작성하셔야 합니다.
 
 __프로젝트__ 와 __마일스톤__ 모두 계획한 내용과 그에 대한 설명을 쓰시면 됩니다.
 
-##Notice(공지)
+### Notice(공지)
 
 관리자(Admin)의 경우 리포트 작성 대신 공지를 작성할 수 있습니다.
 
@@ -104,7 +104,7 @@ Add와 Delete버튼을 사용하여 추가,삭제할 수 있습니다.
 
 Submit버튼을 누르면 공지가 등록됩니다.
 
-##Report 검색 및 정렬
+## Report 검색 및 정렬
 
 리포트 리스트를 볼 수 있는 페이지에서 왼쪽에 검색할 수 있는 부분이 있습니다.
 
@@ -118,7 +118,7 @@ Submit버튼을 누르면 공지가 등록됩니다.
 
 __No.__, __type__, __state__, __title__, __Username__, __Create_Date__, __Last_Update__ 을 클릭하시면 정렬이 됩니다.
 
-##Report Request
+## Report Request
 
 본인이 쓰신 리포트를 보시면 아래칸에 Request버튼이 있는 것을 보실 수 있습니다.
 
@@ -127,3 +127,5 @@ __No.__, __type__, __state__, __title__, __Username__, __Create_Date__, __Last_U
 State은 리포트 리스트에서 확인할 수 있습니다.
 
 현재는 Waiting과 Requested만 가능합니다.
+
+관리자는 state가 Requested 상태로 되어있는 리포트만을 확인한다.

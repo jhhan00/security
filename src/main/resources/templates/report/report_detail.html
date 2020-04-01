@@ -36,7 +36,7 @@
             </div>
             <div>State : <span th:text="${info.state}"></span></div>
         </p>
-        <div style="padding-left: 20px">
+        <div class="p-l-15">
             <div th:if="${info.reportType} == 'Daily'">
                 <p><strong>한 일(Done)</strong></p>
                 <div th:each="view:${list}">

@@ -20,7 +20,10 @@
 
     <script type="text/javascript">
         $(document).ready(function() {
-            $("#table").DataTable()
+            $("#table").DataTable({
+                searching: false,
+                order: [6,"desc"]
+            })
         });
 
         function categoryChange(s) {

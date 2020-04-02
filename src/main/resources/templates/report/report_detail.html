@@ -28,7 +28,7 @@
         <hr/>
         Report Id : <span th:text="${info.reportId}"></span>
         <p>
-            <h5 th:text="${info.simpleDate + '_' + info.reportType}"></h5>
+            <h5 th:text="${info.reportTitle}"></h5>
             by <span th:text="${info.username}"></span>
             <span class="text-grey" th:text="${'['+info.writeDate+']'}"></span>
             <div th:unless="${info.writeDate} == ${info.updatedTime}">
@@ -38,7 +38,7 @@
         </p>
         <div class="p-l-15">
             <div th:if="${info.reportType} == 'Daily'">
-                <p><strong>한 일(Done)</strong></p>
+                <p><strong>한 일(Daily Done)</strong></p>
                 <div th:each="view:${list}">
                     <li th:text="${view.done}"></li>
                 </div>
@@ -164,28 +164,31 @@
                 </div>
             </div>
         </div>
-        <br/><hr/>
-        <div th:if="${authority.username} == ${info.username} and ${info.state} == 'Waiting' or ${info.state} == 'Rejected'" class="row p-l-15">
+        <hr/>
+        <div th:if="${authority.username} == ${info.username} and (${info.state} == 'Waiting' or ${info.state} == 'Rejected')" class="row p-l-15">
+            <form th:if="${info.reportType}=='Daily'" method="get" action="/report/modify_daily">
+                <input type="hidden" name="reportID" th:value="${info.reportId}"/>
+                <input type="submit" class="btn btn-primary" value="Modify"/>
+            </form>
+            <form th:if="${info.reportType}=='Yearly'" method="get" action="/report/modify_yearly">
+                <input type="hidden" name="reportID" th:value="${info.reportId}"/>
+                <input type="submit" class="btn btn-primary" value="Modify"/>
+            </form>
             <form method="post" action="/report/delete">
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-dark" value="Delete"/>
             </form>
             <form action="/report/request_state" method="get">
                 <input type="hidden" name="rId" th:value="${info.reportId}"/>
-                <input type="hidden" name="username" th:value="${info.username}"/>
                 <input type="submit" class="btn btn-info" value="Request"/>
             </form>
         </div>
-<!--        <div th:if="${authority.role} == 'ADMIN' and ${info.state} == 'Requested'">-->
-<!--            <form method="post" action="/change_state">-->
-<!--                <input type="hidden" th:value="${info.reportId}" name="report_id"/>-->
-<!--                <input type="submit" name="Approve" value="Approve">-->
-<!--                <input type="submit" name="Reject" value="Reject">-->
-<!--            </form>-->
-<!--        </div>-->
         <div th:if="${authority.role} == 'ADMIN' and ${info.state} == 'Requested'">
-            <span>Approve</span>
-            <span>Reject</span>
+            <form method="post" action="/change_state">
+                <input type="hidden" th:value="${info.reportId}" name="report_id"/>
+                <input type="submit" class="btn btn-success" name="Approve" value="Approve">
+                <input type="submit" class="btn btn-danger" name="Reject" value="Reject">
+            </form>
         </div>
         <a href="/report">Back to List</a>
     </div>

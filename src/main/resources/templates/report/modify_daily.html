@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modify Daily</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+    <script>
+        var count = 1;
+        function add() {
+            var addedform = document.getElementById('field');
+            var str =
+                "<label>Daily_Done</label>"+
+                "<input type=\"text\" class=\"form-control\" name=\"daily_done" + count + " \" />";
+            var div = document.createElement('div');
+            div.id="added" + count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+            count++;
+            console.log(count);
+        }
+        function remove() {
+            console.log(count);
+            if(count > 1) {
+                var addedDiv = document.getElementById("added" + (--count));
+                document.getElementById('field').removeChild(addedDiv);
+            }
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Back</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="t-c">
+            <span th:text="${authority.username}"></span>, Welcome!
+        </div><hr/>
+        <div>
+            <p>Report ID : <span th:text="${reportID}"></span></p>
+            <h5>Daily Report</h5><br/>
+            <form method="post" action="/report/modify_daily">
+                <input type="hidden" name="reportID" th:value="${reportID}"/>
+                <div th:each="view, i:${list}">
+                    <label>Daily_Done</label>
+                    <input type="text" class="form-control" th:name="${'done'+i.index}" th:value="${view.done}"/>
+                </div>
+                <div>
+                    <div id="field"></div>
+                    <input type="button" value="Add" onclick="add()"/>
+                    <input type="button" value="Delete" onclick="remove()" />
+                </div><br/>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -445,35 +445,8 @@ public class ReportController {
         return "redirect:/report";
     }
 
-    @PostMapping("/change_state")
-    public String changeState(HttpServletRequest request) throws MessagingException {
-        Enumeration<String> line = request.getParameterNames();
-        long id = -1;
-        while(line.hasMoreElements()){
-            String tmp = line.nextElement();
-            log.info(tmp + " _ " + request.getParameter(tmp));
-            if(tmp.equals("report_id"))
-                id = Long.parseLong(request.getParameter(tmp));
-            else if(tmp.equals("Approve")) {
-                Report report = reportRepository.findByReportId(id);
-                EmailSendController es = new EmailSendController();
-                System.out.println("Username : " + report.getUsername());
-                es.SendApproveOrReject(report.getUsername(), "Approved");
-                report.setState("Approved");
-                reportRepository.save(report);
-            }
-            else if(tmp.equals("Reject")) {
-                Report report = reportRepository.findByReportId(id);
-                report.setState("Rejected");
-                reportRepository.save(report);
-            }
-        }
-
-        return "redirect:/report/detail/" + id;
-    }
-
     @GetMapping("/request_state")
-    public String reviewReport(@RequestParam("rId")String id, @RequestParam("username")String name) throws MessagingException {
+    public String reviewReport(@RequestParam("rId")String id) throws MessagingException {
         Report rp = reportRepository.findByReportId(Long.parseLong(id));
         rp.setState("Requested");
         reportRepository.save(rp);
@@ -491,6 +464,138 @@ public class ReportController {
         Report r = reportRepository.findByReportId(r_id);
         reportRepository.delete(r);
 
+        return "redirect:/report";
+    }
+
+    @GetMapping("/modify_daily")
+    public String modifyDaily(@RequestParam("reportID")String id, Model model, Authentication auth) {
+        long r_id = Long.parseLong(id);
+        List<Task> tlist = taskRepository.findByReportId(r_id);
+        model.addAttribute("list",tlist);
+
+        Map<String, String> authority = rd.getUserInfo(auth.getName());
+        model.addAttribute("authority", authority);
+        model.addAttribute("reportID",id);
+
+        return "report/modify_daily";
+    }
+
+    @PostMapping("/modify_daily")
+    public String modifyDailyAction(HttpServletRequest request, Authentication auth) {
+        Enumeration<String> keys = request.getParameterNames();
+        String key = keys.nextElement();
+
+        long idx = Long.parseLong(request.getParameter(key));
+        log.info(key+"_:_"+idx);
+
+        List<Task> tlist = taskRepository.findByReportId(idx);
+        int i=0;
+
+        while(keys.hasMoreElements()) {
+            key = keys.nextElement();
+            log.info(key+"_:_"+request.getParameter(key));
+            Task task = new Task();
+            if(i != tlist.size()) {
+                task = tlist.get(i);
+                task.setDone(request.getParameter(key));
+                taskRepository.save(task);
+                i++;
+            } else if(i == tlist.size()) {
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                String now = LocalDateTime.now().format(dtf);
+
+                task.setReportId(idx);
+                task.setUsername(auth.getName());
+                task.setSimpleDate(now);
+                task.setReportType("Daily");
+                task.setReportKind("Done");
+                task.setDone(request.getParameter(key));
+//                System.out.println(task);
+                taskRepository.save(task);
+            }
+        }
+        Report report = reportRepository.findByReportId(idx);
+        report.setState("Requested");
+        reportRepository.save(report);
+
+        return "redirect:/report/detail/"+idx;
+    }
+
+    @GetMapping("/modify_yearly")
+    public String modifyYearly(@RequestParam("reportID")String id, Model model, Authentication auth) {
+        Map<String, String> authority = rd.getUserInfo(auth.getName());
+        model.addAttribute("authority", authority);
+
+        long r_id = Long.parseLong(id);
+        List<Task> tlist = taskRepository.findByReportId(r_id);
+        model.addAttribute("list",tlist);
+        model.addAttribute("reportID",id);
+
+        return "report/modify_yearly";
+    }
+
+    @PostMapping("/modify_yearly")
+    public String modifyYearlyAction(HttpServletRequest request, Authentication auth) {
+        Enumeration<String> keys = request.getParameterNames();
+        String key = keys.nextElement();
+
+        long idx = Long.parseLong(request.getParameter(key));
+
+        List<Task> tlist = taskRepository.findByReportId(idx);
+        int i=0;
+
+        while(keys.hasMoreElements()) {
+            key = keys.nextElement();
+            int loc1 = key.indexOf("project");
+            int loc2 = key.indexOf("milestone");
+            int loc3 = key.indexOf("another");
+            log.info(key+"_:_"+request.getParameter(key));
+            Task task = new Task();
+
+            if(loc1 != -1) { // project_description일 때
+                if(loc3 == -1) {
+                    task = tlist.get(i++);
+                    task.setProgress(request.getParameter(key));
+                    key = keys.nextElement();
+                    task.setComment(request.getParameter(key));
+                    System.out.println(task);
+                } else {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    String now = LocalDateTime.now().format(dtf);
+
+                    task.setReportId(idx);
+                    task.setUsername(auth.getName());
+                    task.setSimpleDate(now);
+                    task.setReportType("Yearly");
+                    task.setReportKind("project_description");
+                    task.setProgress(request.getParameter(key));
+                    key = keys.nextElement();
+                    task.setComment(request.getParameter(key));
+                    System.out.println(task);
+                }
+            } else if(loc2 != -1) { // milestone일 때
+                if(loc3 == -1) {
+                    task = tlist.get(i++);
+                    task.setProgress(request.getParameter(key));
+                    key = keys.nextElement();
+                    task.setComment(request.getParameter(key));
+                    System.out.println(task);
+                } else {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    String now = LocalDateTime.now().format(dtf);
+
+                    task.setReportId(idx);
+                    task.setUsername(auth.getName());
+                    task.setSimpleDate(now);
+                    task.setReportType("Yearly");
+                    task.setReportKind("milestone");
+                    task.setProgress(request.getParameter(key));
+                    key = keys.nextElement();
+                    task.setComment(request.getParameter(key));
+                    System.out.println(task);
+                }
+            }
+        }
         return "redirect:/report";
     }
 }

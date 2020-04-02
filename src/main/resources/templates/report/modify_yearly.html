@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modify Yearly</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+    <script>
+        var dscr_count=1;
+        var milestone_count=1;
+        function description_add() {
+            var addedform = document.getElementById('descriptions');
+            var str =
+                "<label>Project Name</label>" +
+                "<input type='text' class='form-control' name='another_project" + dscr_count + "' placeholder='project description'/>" +
+                "<label>Description</label><br/>" +
+                "<textarea type='text' cols='30' placeholder='description' name='project_description" + dscr_count + "'></textarea>";
+            var div = document.createElement('div');
+            div.id="Description" + dscr_count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            dscr_count++; console.log(dscr_count);
+        }
+        function description_delete() {
+            console.log(dscr_count);
+            if(dscr_count > 1) {
+                var addedDiv = document.getElementById("Description" + (--dscr_count));
+                document.getElementById('descriptions').removeChild(addedDiv);
+            }
+        }
+        function milestone_add() {
+            var addedform = document.getElementById('milestones');
+            var str =
+                "<label>Milestone</label>" +
+                "<input type='text' class='form-control' name='another_milestone" + milestone_count + "' placeholder='milestone'/>" +
+                "<label>Description</label><br/>" +
+                "<textarea type='text' cols='30' placeholder='description' name='milestone_description" + milestone_count + "'></textarea>";
+            var div = document.createElement('div');
+            div.id = "Milestone" + milestone_count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            milestone_count++; console.log(milestone_count);
+        }
+        function milestone_delete() {
+            console.log(milestone_count);
+            if(milestone_count > 1) {
+                var addedDiv = document.getElementById("Milestone" + (--milestone_count));
+                document.getElementById('milestones').removeChild(addedDiv);
+            }
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Back</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="t-c">
+            <span th:text="${authority.username}"></span>, Welcome!
+        </div><hr/>
+        <div>
+            <p>Report ID : <span th:text="${reportID}"></span></p>
+            <h5>Yearly Report</h5><br/>
+            <form method="post" action="">
+                <input type="hidden" name="reportID" th:value="${reportID}"/>
+                <p>Project Description</p>
+                <div th:each="view, i:${list}" th:if="${view.reportKind}=='project_description'">
+                    <label>Project name</label>
+                    <input type="text" class="form-control" th:name="${'project'+i.index}" th:value="${view.progress}"/>
+                    <label>Description</label><br/>
+                    <textarea type="text" cols="30" placeholder="description" th:name="${'description'+i.index}"></textarea>
+                </div>
+                <div>
+                    <div id="descriptions"></div>
+                    <input type="button" value="Add" onclick="description_add()"/>
+                    <input type="button" value="Delete" onclick="description_delete()"/>
+                </div><br/>
+                <p>MileStones</p>
+                <div th:each="view, i:${list}" th:if="${view.reportKind}=='milestone'">
+                    <label>milestone</label>
+                    <input type="text" class="form-control" th:name="${'milestone'+i.index}" th:value="${view.progress}"/>
+                    <label>Description</label><br/>
+                    <textarea type="text" cols="30" placeholder="description" th:name="${'description'+i.index}"></textarea>
+                </div>
+                <div>
+                    <div id="milestones"></div>
+                    <input type="button" value="Add" onclick="milestone_add()"/>
+                    <input type="button" value="Delete" onclick="milestone_delete()"/>
+                </div><br/>
+                <button class="btn btn-primary" type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

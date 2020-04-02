@@ -35,23 +35,6 @@ public class EmailSendController {
 
     private static String certNumber = "";
 
-    public String getCertNumber() {
-        return certNumber;
-    }
-
-    public void setCertNumber(String certNumber) {
-        this.certNumber = certNumber;
-    }
-
-    public void SendApproveOrReject(String name, String state) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        message.setSubject("Report Result  " + state);
-        message.setRecipient(Message.RecipientType.TO, new InternetAddress(name));
-        message.setText("Your Report is " + state + ".\nCheck Your Report.");
-        message.setSentDate(new Date());
-        mailSender.send(message);
-    }
-
     @PostMapping("/change_state")
     public String requestEmailAndChangeState(HttpServletRequest request) throws MessagingException {
         Enumeration<String> line = request.getParameterNames();
@@ -62,30 +45,19 @@ public class EmailSendController {
             log.info(tmp + " _ " + request.getParameter(tmp));
             if(tmp.equals("report_id"))
                 id = Long.parseLong(request.getParameter(tmp));
-            else if(tmp.equals("Approve")) {
-                Report report = reportRepository.findByReportId(id);
+            else {
+                String word = "";
+                if(tmp.equals("Approve")) word = "Approved";
+                else if(tmp.equals("Reject")) word = "Rejected";
 
+                Report report = reportRepository.findByReportId(id);
                 MimeMessage message = mailSender.createMimeMessage();
-                message.setSubject(report.getReportType() + " Report Result : Approved");
+                message.setSubject(report.getReportTitle() + " Result : " + word);
                 message.setRecipient(Message.RecipientType.TO, new InternetAddress(report.getUsername()));
-                message.setText("Your Report is Approved.\nCheck Your Report.");
+                message.setText("Your " + report.getReportTitle() + " is " + word + ".\nCheck Your Report.");
                 message.setSentDate(new Date());
                 mailSender.send(message);
-
-                report.setState("Approved");
-                reportRepository.save(report);
-            }
-            else if(tmp.equals("Reject")) {
-                Report report = reportRepository.findByReportId(id);
-
-                MimeMessage message = mailSender.createMimeMessage();
-                message.setSubject(report.getReportType() + " Report Result : Rejected");
-                message.setRecipient(Message.RecipientType.TO, new InternetAddress(report.getUsername()));
-                message.setText("Your Report is Rejected.\nCheck Your Report.");
-                message.setSentDate(new Date());
-                mailSender.send(message);
-
-                report.setState("Rejected");
+                report.setState(word);
                 reportRepository.save(report);
             }
         }

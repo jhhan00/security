@@ -1,18 +1,38 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <img alt="Vue logo" src="./assets/logo.png"><br/>
+<!--    <HelloWorld msg="Welcome to Your Vue.js App"/>-->
+    {{msg}}
+    <global-component></global-component>
+    <my_component></my_component>
+    <parent-component></parent-component>
+    <h2>View Router Practice</h2>
+    <p>
+      <router-link to="/main">Main</router-link>
+      <router-link to="/login">login</router-link>
+    </p>
+    <router-view></router-view>
   </div>
 </template>
 
-<script src="https://cdn.jsdelivr.net/npm/vue@2.5.2/dist/vue.js"></script>
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+// import HelloWorld from './components/HelloWorld.vue'
+import my_component from './components/local_component'
+import GlobalComponent from "./components/global-component";
+import ParentComponent from "./components/parent-component";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    ParentComponent,
+    GlobalComponent,
+    // HelloWorld
+    my_component
+  },
+  data: function() {
+    return {
+      msg: 'Hello Vuejs!'
+    }
   }
 }
 

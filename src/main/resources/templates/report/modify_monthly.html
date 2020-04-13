@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modify Monthly</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+    <script>
+        var this_month_count = 1;
+        var next_month_count = 1;
+        function this_month_add() {
+            var addedform = document.getElementById("Another_month_result");
+            var str =
+                "<label>Done </label>" +
+                "<input type='text' name='another_done" + this_month_count + "'/>" +
+                "<label> Achievement </label>" +
+                "<input type='number' name='another_real_achievement" + this_month_count + "' placeholder='1~100' min='1' max='100'/><br/>" +
+                "<label>Comment</label><br/>" +
+                "<textarea type='text' cols='30' name='another_comment" + this_month_count + "' placeholder='comment'></textarea>";
+            var div = document.createElement('div');
+            div.id="Added_done" + this_month_count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            this_month_count++; console.log(this_month_count);
+        }
+        function this_month_delete() {
+            if(this_month_count > 1) {
+                var addedDiv = document.getElementById("Added_done" + (--this_month_count));
+                document.getElementById('Another_month_result').removeChild(addedDiv);
+            }
+            console.log(this_month_count);
+        }
+        function next_month_add() {
+            var addedform = document.getElementById("Next_month_plan");
+            var str =
+                "<label>Plan</label>" +
+                "<input type='text' name='another_plan" + next_month_count + "'/>" +
+                "<label>Expected Achievement</label>" +
+                "<input type='number' name='another_expected_achievement" + next_month_count + "' placeholder='1~100' min='1' max='100'/><br/>" +
+                "<label>Comment</label><br/>" +
+                "<textarea type='text' cols='30' name='another_description" + next_month_count + "' placeholder='comment'></textarea>";
+            var div = document.createElement('div');
+            div.id="Added_plan" + next_month_count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            next_month_count++; console.log(next_month_count);
+        }
+        function next_month_delete() {
+            if(next_month_count > 1) {
+                var addedDiv = document.getElementById("Added_plan" + (--next_month_count));
+                document.getElementById('Next_month_plan').removeChild(addedDiv);
+            }
+            console.log(next_month_count);
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Back</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="t-c">
+            <span th:text="${authority.username}"></span>, Welcome!
+        </div><hr/>
+        <div>
+            <p>Report ID : <span th:text="${reportID}"></span></p>
+            <h5>Monthly Report Modify</h5><br/>
+            <form method="post" action="/report/modify_monthly">
+                <input type="hidden" name="reportID" th:value="${reportID}"/>
+                <p><h6>This Month Result</h6></p>
+                <div th:each="view, i:${list}" th:if="${view.reportKind}=='Done'">
+                    <label>Done</label>
+                    <input type="text" th:name="${'done'+i.index}" th:value="${view.done}"/>
+                    <label>Achievement</label>
+                    <input type="number" placeholder="1~100" min="1" max="100" th:name="${'achievement'+i.index}" th:value="${view.realAchievement}"/><br/>
+                    <label>Comment</label><br/>
+                    <textarea type="text" cols="30" th:name="${'comment'+i.index}" placeholder="comment"></textarea>
+                </div>
+                <div>
+                    <div id="Another_month_result"></div>
+                    <input type="button" value="Add" onclick="this_month_add()"/>
+                    <input type="button" value="Delete" onclick="this_month_delete()"/>
+                </div><br/>
+                <div>
+                    <p><h6>Next Month</h6></p>
+                    <div th:each="view, i:${list}" th:if="${view.reportKind}=='Next_Month_plan'">
+                        <label>Plan</label>
+                        <input type="text" th:name="${'plan'+i.index}" th:value="${view.progress}"/>
+                        <label>Expected Achievement</label>
+                        <input type="number" placeholder="1~100" min="1" max="100" th:name="${'achievement'+i.index}" th:value="${view.expectedAchievement}"/><br/>
+                        <label>Comment</label><br/>
+                        <textarea type="text" cols="30" th:name="${'comment'+i.index}" placeholder="comment"></textarea>
+                    </div>
+                    <div id="Next_month_plan"></div>
+                    <input type="button" value="Add" onclick="next_month_add()"/>
+                    <input type="button" value="Delete" onclick="next_month_delete()"/>
+                </div><br/>
+                <button class="btn btn-primary" type="submit">Modify</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -45,7 +45,7 @@
         </div><hr/>
         <div>
             <p>Report ID : <span th:text="${reportID}"></span></p>
-            <h5>Daily Report</h5><br/>
+            <h5>Daily Report Modify</h5><br/>
             <form method="post" action="/report/modify_daily">
                 <input type="hidden" name="reportID" th:value="${reportID}"/>
                 <div th:each="view, i:${list}">
@@ -57,7 +57,7 @@
                     <input type="button" value="Add" onclick="add()"/>
                     <input type="button" value="Delete" onclick="remove()" />
                 </div><br/>
-                <button class="btn btn-primary" type="submit">Submit</button>
+                <button class="btn btn-primary" type="submit">Modify</button>
             </form>
         </div>
     </div>

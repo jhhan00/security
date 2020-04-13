@@ -595,7 +595,174 @@ public class ReportController {
                     System.out.println(task);
                 }
             }
+            taskRepository.save(task);
         }
-        return "redirect:/report";
+        Report r = reportRepository.findByReportId(idx);
+        r.setState("Requested");
+        reportRepository.save(r);
+
+        return "redirect:/report/detail/"+idx;
+    }
+
+    @GetMapping("/modify_monthly")
+    public String modifyMonthly(@RequestParam("reportID")String id, Model model, Authentication auth) {
+        Map<String, String> authority = rd.getUserInfo(auth.getName());
+        model.addAttribute("authority", authority);
+
+        long r_id = Long.parseLong(id);
+        List<Task> tlist = taskRepository.findByReportId(r_id);
+        model.addAttribute("list",tlist);
+        model.addAttribute("reportID",id);
+
+        return "report/modify_monthly";
+    }
+
+    @PostMapping("/modify_monthly")
+    public String modifyMonthlyAction(HttpServletRequest request, Authentication auth) {
+        Enumeration<String> keys = request.getParameterNames();
+        String key = keys.nextElement();
+
+        long idx = Long.parseLong(request.getParameter(key));
+
+        List<Task> tlist = taskRepository.findByReportId(idx);
+        int i=0;
+
+        while(keys.hasMoreElements()) {
+            key = keys.nextElement();
+            log.info(key + "_:_" + request.getParameter(key));
+            int loc1 = key.indexOf("done");
+            int loc2 = key.indexOf("plan");
+            int loc3 = key.indexOf("another");
+            Task task = new Task();
+            if(loc1 != -1) { // this month result
+                if(loc3 == -1) {
+                    task = tlist.get(i++);
+                } else {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    String now = LocalDateTime.now().format(dtf);
+
+                    task.setReportId(idx);
+                    task.setUsername(auth.getName());
+                    task.setSimpleDate(now);
+                    task.setReportType("Monthly");
+                    task.setReportKind("Done");
+
+                }
+                task.setDone(request.getParameter(key));
+                key = keys.nextElement();
+                task.setRealAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                task.setComment(request.getParameter(key));
+                System.out.println(task);
+            } else if(loc2 != -1) { // next month plan
+                if(loc3 == -1) {
+                    task = tlist.get(i++);
+                } else {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    String now = LocalDateTime.now().format(dtf);
+
+                    task.setReportId(idx);
+                    task.setUsername(auth.getName());
+                    task.setSimpleDate(now);
+                    task.setReportType("Monthly");
+                    task.setReportKind("Next_Month_plan");
+                }
+                task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                task.setExpectedAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                task.setComment(request.getParameter(key));
+                System.out.println(task);
+            }
+            taskRepository.save(task);
+        }
+        Report r = reportRepository.findByReportId(idx);
+        r.setState("Requested");
+        reportRepository.save(r);
+
+        return "redirect:/report/detail/"+idx;
+    }
+
+    @GetMapping("/modify_weekly")
+    public String modifyWeekly(@RequestParam("reportID")String id, Model model, Authentication auth) {
+        Map<String, String> authority = rd.getUserInfo(auth.getName());
+        model.addAttribute("authority", authority);
+
+        long r_id = Long.parseLong(id);
+        List<Task> tlist = taskRepository.findByReportId(r_id);
+        model.addAttribute("list",tlist);
+        model.addAttribute("reportID",id);
+
+        System.out.println(tlist.get(tlist.size()-1));
+        boolean planOrResult = false;
+        if(tlist.get(tlist.size()-1).getReportKind().equals("weekly_result")) planOrResult = true;
+        model.addAttribute("isTrue",planOrResult);
+
+        return "report/modify_weekly";
+    }
+
+    @PostMapping("/modify_weekly")
+    public String modifyWeeklyAction(HttpServletRequest request, Authentication auth) {
+        Enumeration<String> keys = request.getParameterNames();
+        String key = keys.nextElement();
+
+        long idx = Long.parseLong(request.getParameter(key));
+        log.info("r_id_:_"+idx);
+
+        key = keys.nextElement();
+        String choose = "";
+        if(request.getParameter(key).equals("false")) choose = "weekly_plan";
+        else if(request.getParameter(key).equals("true")) choose = "weekly_result";
+
+        List<Task> tlist = taskRepository.findByReportIdAndReportKind(idx,choose);
+        int i=0;
+
+        while(keys.hasMoreElements()) {
+            key = keys.nextElement();
+            log.info(key + "_:_" + request.getParameter(key));
+            Task task = new Task();
+            if(choose.equals("weekly_plan")) {
+                if(i != tlist.size()) {
+                    task = tlist.get(i++);
+                } else {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    String now = LocalDateTime.now().format(dtf);
+
+                    task.setReportId(idx);
+                    task.setUsername(auth.getName());
+                    task.setSimpleDate(now);
+                    task.setReportType("Weekly");
+                    task.setReportKind("weekly_plan");
+                }
+                task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                task.setExpectedAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                task.setComment(request.getParameter(key));
+                System.out.println(task);
+            } else if(choose.equals("weekly_result")) {
+                if(i != tlist.size()) {
+                    task = tlist.get(i++);
+                } else {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    String now = LocalDateTime.now().format(dtf);
+
+                    task.setReportId(idx);
+                    task.setUsername(auth.getName());
+                    task.setSimpleDate(now);
+                    task.setReportType("Weekly");
+                    task.setReportKind("weekly_result");
+                }
+                task.setDone(request.getParameter(key));
+                key = keys.nextElement();
+                task.setRealAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                task.setComment(request.getParameter(key));
+                System.out.println(task);
+            }
+            taskRepository.save(task);
+        }
+
+        return "redirect:/report/detail/"+idx;
     }
 }

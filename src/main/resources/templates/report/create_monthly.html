@@ -89,6 +89,7 @@
         <h5>Create Monthly</h5>
         <div>
             <form th:object="${task}" method="post" action="/report/create/monthly">
+                <label>This Month Result</label>
                 <div th:if="${boolValue} == true">
                     <label>This Month</label>
                     <div id="month_result"></div>

@@ -27,11 +27,11 @@
             dscr_count++; console.log(dscr_count);
         }
         function description_delete() {
-            console.log(dscr_count);
             if(dscr_count > 1) {
                 var addedDiv = document.getElementById("Description" + (--dscr_count));
                 document.getElementById('descriptions').removeChild(addedDiv);
             }
+            console.log(dscr_count);
         }
         function milestone_add() {
             var addedform = document.getElementById('milestones');
@@ -69,8 +69,8 @@
         </div><hr/>
         <div>
             <p>Report ID : <span th:text="${reportID}"></span></p>
-            <h5>Yearly Report</h5><br/>
-            <form method="post" action="">
+            <h5>Yearly Report Modify</h5><br/>
+            <form method="post" action="/report/modify_yearly">
                 <input type="hidden" name="reportID" th:value="${reportID}"/>
                 <p>Project Description</p>
                 <div th:each="view, i:${list}" th:if="${view.reportKind}=='project_description'">
@@ -96,7 +96,7 @@
                     <input type="button" value="Add" onclick="milestone_add()"/>
                     <input type="button" value="Delete" onclick="milestone_delete()"/>
                 </div><br/>
-                <button class="btn btn-primary" type="submit">Submit</button>
+                <button class="btn btn-primary" type="submit">Modify</button>
             </form>
         </div>
     </div>

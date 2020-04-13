@@ -170,6 +170,14 @@
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-primary" value="Modify"/>
             </form>
+            <form th:if="${info.reportType}=='Weekly'" method="get" action="/report/modify_weekly">
+                <input type="hidden" name="reportID" th:value="${info.reportId}"/>
+                <input type="submit" class="btn btn-primary" value="Modify"/>
+            </form>
+            <form th:if="${info.reportType}=='Monthly'" method="get" action="/report/modify_monthly">
+                <input type="hidden" name="reportID" th:value="${info.reportId}"/>
+                <input type="submit" class="btn btn-primary" value="Modify"/>
+            </form>
             <form th:if="${info.reportType}=='Yearly'" method="get" action="/report/modify_yearly">
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-primary" value="Modify"/>

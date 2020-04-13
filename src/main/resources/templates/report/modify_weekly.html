@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modify Weekly</title>
+    <link rel="stylesheet" href="/bootstrap.css">
+    <link rel="stylesheet" href="/bootstrap-grid.css">
+    <link rel="stylesheet" href="/bootstrap-reboot.css">
+    <link rel="stylesheet" type="text/css" href="/board.css">
+    <script>
+        plan_count=1;
+        result_count=1;
+        function weekly_plan_add() {
+            var addedform = document.getElementById("another_weekly_plan");
+            var str =
+                "<label>Weekly Plan</label>" +
+                "<input type='text' name='another_plan" + plan_count + "'/>" +
+                "<label>Expected Achievement</label>" +
+                "<input type='number' name='another_expected_achievement" + plan_count + "' placeholder='1~100' min='1' max='100'/><br/>" +
+                "<label>Description</label><br/>" +
+                "<textarea type='text' cols='30' name='another_comment" + plan_count + "' placeholder='comment'></textarea>";
+            var div = document.createElement('div');
+            div.id="Added_plan" + plan_count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            plan_count++; console.log(plan_count);
+        }
+        function weekly_plan_delete() {
+            if(plan_count > 1) {
+                var addedDiv = document.getElementById("Added_plan" + (--plan_count));
+                document.getElementById('another_weekly_plan').removeChild(addedDiv);
+            }
+            console.log(plan_count);
+        }
+        function weekly_result_add() {
+            var addedform = document.getElementById("another_weekly_result");
+            var str =
+                "<label>Weekly Result</label>" +
+                "<input type='text' name='another_result" + result_count + "'/>" +
+                "<label>Achievement</label>" +
+                "<input type='number' name='another_real_achievement" + result_count + "' placeholder='1~100' min='1' max='100'/><br/>" +
+                "<label>Description</label><br/>" +
+                "<textarea type='text' cols='30' name='another_comment" + result_count + "' placeholder='comment'></textarea>";
+            var div = document.createElement('div');
+            div.id="Added_result" + result_count;
+            div.innerHTML = str;
+            addedform.appendChild(div);
+
+            result_count++; console.log(result_count);
+        }
+        function weekly_result_delete() {
+            if(result_count > 1) {
+                var addedDiv = document.getElementById("Added_result" + (--result_count));
+                document.getElementById('another_weekly_result').removeChild(addedDiv);
+            }
+            console.log(result_count);
+        }
+    </script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Main</a>
+            <a class="navbar-brand" href="/report">Back</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="t-c">
+            <span th:text="${authority.username}"></span>, Welcome!
+        </div><hr/>
+        <div>
+            <p>Report ID : <span th:text="${reportID}"></span></p>
+            <h5>Weekly Report Modify</h5><br/>
+            <form method="post" action="/report/modify_weekly">
+                <input type="hidden" name="reportID" th:value="${reportID}"/>
+                <input type="hidden" name="plan_or_result" th:value="${isTrue}"/>
+                <div th:if="${isTrue}==false">
+                    <div>
+                        <p><h6>Weekly Plans</h6></p>
+                        <div th:each="view, i:${list}" th:if="${view.reportKind}=='weekly_plan'">
+                            <label>Weekly Plan</label>
+                            <input type="text" th:name="${'plan'+i.index}" th:value="${view.progress}"/>
+                            <label>Expected Achievement</label>
+                            <input type="number" th:name="${'achievment'+i.index}" th:value="${view.expectedAchievement}" placeholder="1~100" min="1" max="100"/><br/>
+                            <label>Description</label><br/>
+                            <textarea type="text" cols="30" th:name="${'comment'+i.index}" placeholder="comment"></textarea>
+                        </div>
+                        <div id="another_weekly_plan"></div>
+                        <input type="button" value="Add" onclick="weekly_plan_add()"/>
+                        <input type="button" value="Delete" onclick="weekly_plan_delete()"/>
+                    </div><br/>
+                    <button class="btn btn-primary" type="submit">Modify</button>
+                </div>
+                <div th:if="${isTrue}==true">
+                    <p><h6>Weekly Results</h6></p>
+                    <div>
+                        <div th:each="view, i:${list}" th:if="${view.reportKind}=='weekly_result'">
+                            <label>Weekly Result</label>
+                            <input type="text" th:name="${'done'+i.index}" th:value="${view.done}" readonly/>
+                            <label>Achievement</label>
+                            <input type="number" th:name="${'achievement'+i.index}" th:value="${view.realAchievement}" placeholder="1~100" min="1" max="100"/><br/>
+                            <label>Description</label><br/>
+                            <textarea type="text" cols="30" th:name="${'comment'+i.index}" placeholder="comment"></textarea>
+                        </div>
+                        <div id="another_weekly_result"></div>
+                        <input type="button" value="Add" onclick="weekly_result_add()"/>
+                        <input type="button" value="Delete" onclick="weekly_result_delete()"/>
+                    </div><br/>
+                    <button class="btn btn-primary" type="submit">Modify</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

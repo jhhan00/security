@@ -90,7 +90,8 @@ public class ReportController {
     }
 
     @GetMapping("/detail/{reportId}") // report 상세보기
-    public String reportView(@PathVariable("reportId") long reportid, Model model, Authentication auth) {
+    public String reportView(@PathVariable("reportId") long reportid, Model model, Authentication auth,
+                             HttpServletRequest request) {
         //System.out.println(reportid + ". " + auth.getName() + " in detail");
 
         Map<String, String> authority = rd.getUserInfo(auth.getName());
@@ -101,17 +102,19 @@ public class ReportController {
 
         Report rp = this.reportRepository.findByReportId(reportid);
         model.addAttribute("info",rp);
+        model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/report_detail";
     }
 
     @GetMapping("/create/daily")
-    public String createDaily(Model model, Authentication auth) {
+    public String createDaily(Model model, Authentication auth, HttpServletRequest request) {
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
-        List<Map<String, Object>> list = null;
-        model.addAttribute("task",list);
+        List<Map<String, Object>> list = new ArrayList<>();
+        model.addAttribute("task", list);
+        model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/create_daily";
     }
@@ -165,7 +168,7 @@ public class ReportController {
     }
 
     @GetMapping("/create/weekly")
-    public String createWeekly(Authentication auth, Model model) {
+    public String createWeekly(Authentication auth, Model model, HttpServletRequest request) {
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -187,6 +190,7 @@ public class ReportController {
         if(tlist != null && tlist.get(tlist.size()-1).getReportKind().equals("weekly_plan")) isValid=true;
         System.out.println("isValid : " + isValid);
         model.addAttribute("Valid",isValid);
+        model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/create_weekly";
     }
@@ -274,7 +278,7 @@ public class ReportController {
     }
 
     @GetMapping("/create/monthly")
-    public String createMonthly(Authentication auth, Model model) {
+    public String createMonthly(Authentication auth, Model model, HttpServletRequest request) {
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -291,6 +295,7 @@ public class ReportController {
         if(idx != -1) tlist = taskRepository.findByReportId(idx);
         model.addAttribute("task",tlist);
         model.addAttribute("boolValue",isNull);
+        model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/create_monthly";
     }
@@ -355,12 +360,13 @@ public class ReportController {
     }
 
     @GetMapping("/create/project_goal")
-    public String createProjectGoal(Authentication auth, Model model) {
+    public String createProjectGoal(Authentication auth, Model model, HttpServletRequest request) {
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
-        List<Task> tlist = null;
-        model.addAttribute("task",tlist);
+        List<Task> tlist = new ArrayList<>();
+        model.addAttribute("task", tlist);
+        model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/create_yearly";
     }
@@ -420,12 +426,13 @@ public class ReportController {
     }
 
     @GetMapping("/create/notice")
-    public String createNotice(Authentication auth, Model model) {
+    public String createNotice(Authentication auth, Model model, HttpServletRequest request) {
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
-        List<Task> taskList = null;
-        model.addAttribute("task",taskList);
+        List<Task> taskList = new ArrayList<>();
+        model.addAttribute("task", taskList);
+        model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "/report/create_notice";
     }

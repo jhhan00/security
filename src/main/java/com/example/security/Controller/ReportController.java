@@ -34,8 +34,17 @@ public class ReportController {
     @Autowired
     TaskRepository taskRepository;
 
+    public int LoginOrNot(Authentication authentication) {
+        log.info("auth : " + authentication);
+        if(authentication == null)  return -1;
+        else return 1;
+    }
+
     @GetMapping // report 전체보기
     public String reportList(Model model, Authentication auth) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         List<Report> list = reportRepository.findAllByOrderByUpdatedTimeDesc();
         model.addAttribute("list",list);
 
@@ -49,6 +58,9 @@ public class ReportController {
     @GetMapping("/search") // report 검색해서 보기
     public String reportSearch(Authentication auth, Model model, @RequestParam("type")String type,
                                @RequestParam("search")String info) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -74,6 +86,9 @@ public class ReportController {
     @GetMapping("/sorting") // report 정렬해서 원하는 것 보기
     public String reportSorting(Authentication auth, Model model, @RequestParam("Big")String big,
                                 @RequestParam("Small")String small) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -92,7 +107,8 @@ public class ReportController {
     @GetMapping("/detail/{reportId}") // report 상세보기
     public String reportView(@PathVariable("reportId") long reportid, Model model, Authentication auth,
                              HttpServletRequest request) {
-        //System.out.println(reportid + ". " + auth.getName() + " in detail");
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
 
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority",authority);
@@ -174,22 +190,15 @@ public class ReportController {
 
         List<Report> rlist = reportRepository.findByReportTypeAndUsername("Weekly",auth.getName());
         long idx = -1;
-        if(rlist.size() != 0){
-//            System.out.println(rlist);
-//            System.out.println(rlist.get(0).getReportId());
-//            System.out.println(rlist.get(rlist.size()-1).getReportId());
+        boolean isNull = true; // 아무 것도 없으면 처음 주간 리포트 쓰는 경우
+        if(rlist.size() != 0) {
             idx = rlist.get(rlist.size()-1).getReportId();
+            isNull = false; // 있다면 주간 리포트를 한 번 이상 쓴 경우
         }
         List<Task> tlist = null;
         if(idx != -1) tlist = taskRepository.findByReportId(idx);
         model.addAttribute("task", tlist);
-
-        boolean isValid = false;
-        System.out.println("idx : " + idx);
-//        if(tlist != null)System.out.println(tlist.get(tlist.size()-1));
-        if(tlist != null && tlist.get(tlist.size()-1).getReportKind().equals("weekly_plan")) isValid=true;
-        System.out.println("isValid : " + isValid);
-        model.addAttribute("Valid",isValid);
+        model.addAttribute("Valid", isNull);
         model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/create_weekly";
@@ -198,41 +207,21 @@ public class ReportController {
     @PostMapping("/create/weekly")
     public String createWeeklyAction(Authentication auth, HttpServletRequest request) {
         Enumeration<String> keys = request.getParameterNames();
-        String line = keys.nextElement();
-        String temp = "";
-        if(request.getParameter(line).equals("plan"))
-            temp = "weekly_plan";
-        else if(request.getParameter(line).equals("after"))
-            temp = "weekly_result";
-
-        List<Report> rlist = reportRepository.findByReportTypeAndUsername("Weekly",auth.getName());
-        long idx = -1;
-        if(rlist.size() != 0) idx = rlist.get(rlist.size()-1).getReportId();
-        System.out.println("idx = " + idx);
 
         LocalDateTime now = LocalDateTime.now();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
         String nowDate = now.format(dtf);
 
         //Report Save
-        Report report;
-        if(temp.equals("weekly_plan")){
-            report = new Report();
-            report.setUsername(auth.getName());
-            report.setReportType("Weekly");
-            report.setSimpleDate(nowDate);
-            report.setWriteDate(now);
-            report.setUpdatedTime(now);
-            report.setState("Waiting");
-            report.setReportTitle(nowDate + "_Weekly_Report");
-            System.out.println(report);
-        } else {
-            report = reportRepository.findByReportId(idx);
-            report.setUpdatedTime(now);
-            report.setState("Waiting");
-            report.setReportTitle(nowDate + "_Weekly_Report");
-            System.out.println(report);
-        }
+        Report report = new Report();
+        report.setUsername(auth.getName());
+        report.setReportType("Weekly");
+        report.setSimpleDate(nowDate);
+        report.setWriteDate(now);
+        report.setUpdatedTime(now);
+        report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Weekly_Report");
+        System.out.println(report);
         reportRepository.save(report);
 
         System.out.println(report.getReportId());
@@ -240,27 +229,24 @@ public class ReportController {
 
         while(keys.hasMoreElements()) {
             String key = keys.nextElement();
-            log.info(key + " : " + request.getParameter(key));
+            int loc1 = key.indexOf("done");
+            int loc2 = key.indexOf("plan");
+            log.info(key + " : " + request.getParameter(key) + " -- loc1 : " + loc1 + ", loc2 : " + loc2);
             Task task = new Task();
             task.setReportId(r_id);
             task.setUsername(auth.getName());
             task.setSimpleDate(nowDate);
             task.setReportType("Weekly");
-            task.setReportKind(temp);
-            if(temp.equals("weekly_plan")) { // Weekly Report의 시작인 경우
+            if(loc1 == 0) {
+                task.setReportKind("weekly_result");
+                task.setDone(request.getParameter(key));
+                key = keys.nextElement();
+                task.setRealAchievement(request.getParameter(key));
+            } else if(loc2 == 0) {
+                task.setReportKind("weekly_plan");
                 task.setProgress(request.getParameter(key));
                 key = keys.nextElement();
                 task.setExpectedAchievement(request.getParameter(key));
-            } else { // Weekly Report의 끝인 경우
-                task.setDone(request.getParameter(key));
-                Task t1 = taskRepository.findByReportIdAndProgress(r_id,task.getDone());
-                System.out.println("t1 : " + t1);
-                if(t1 != null) {
-                    System.out.println("Right Now ExpectedAchievement : " + t1.getExpectedAchievement());
-                    task.setExpectedAchievement(t1.getExpectedAchievement());
-                }
-                key = keys.nextElement();
-                task.setRealAchievement(request.getParameter(key));
             }
             key = keys.nextElement();
             //
@@ -725,10 +711,10 @@ public class ReportController {
         model.addAttribute("list",tlist);
         model.addAttribute("reportID",id);
 
-        System.out.println(tlist.get(tlist.size()-1));
-        boolean planOrResult = false;
-        if(tlist.get(tlist.size()-1).getReportKind().equals("weekly_result")) planOrResult = true;
-        model.addAttribute("isTrue",planOrResult);
+//        System.out.println(tlist.get(tlist.size()-1));
+//        boolean planOrResult = false;
+//        if(tlist.get(tlist.size()-1).getReportKind().equals("weekly_result")) planOrResult = true;
+//        model.addAttribute("isTrue",planOrResult);
 
         return "report/modify_weekly";
     }
@@ -739,41 +725,19 @@ public class ReportController {
         String key = keys.nextElement();
 
         long idx = Long.parseLong(request.getParameter(key));
-        log.info("r_id_:_"+idx);
-
-        key = keys.nextElement();
-        String choose = "";
-        if(request.getParameter(key).equals("false")) choose = "weekly_plan";
-        else if(request.getParameter(key).equals("true")) choose = "weekly_result";
-
-        List<Task> tlist = taskRepository.findByReportIdAndReportKind(idx,choose);
+        List<Task> tlist = taskRepository.findByReportId(idx);
         int i=0;
+        log.info("r_id_:_"+idx);
 
         while(keys.hasMoreElements()) {
             key = keys.nextElement();
             log.info(key + "_:_" + request.getParameter(key));
+            int loc1 = key.indexOf("done");
+            int loc2 = key.indexOf("plan");
+            int loc3 = key.indexOf("another");
             Task task = new Task();
-            if(choose.equals("weekly_plan")) {
-                if(i != tlist.size()) {
-                    task = tlist.get(i++);
-                } else {
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
-                    String now = LocalDateTime.now().format(dtf);
-
-                    task.setReportId(idx);
-                    task.setUsername(auth.getName());
-                    task.setSimpleDate(now);
-                    task.setReportType("Weekly");
-                    task.setReportKind("weekly_plan");
-                }
-                task.setProgress(request.getParameter(key));
-                key = keys.nextElement();
-                task.setExpectedAchievement(request.getParameter(key));
-                key = keys.nextElement();
-                task.setComment(request.getParameter(key));
-                System.out.println(task);
-            } else if(choose.equals("weekly_result")) {
-                if(i != tlist.size()) {
+            if(loc1 != -1) { // this week result or done
+                if(loc3 == -1) {
                     task = tlist.get(i++);
                 } else {
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -791,9 +755,31 @@ public class ReportController {
                 key = keys.nextElement();
                 task.setComment(request.getParameter(key));
                 System.out.println(task);
+            } else if(loc2 != -1) { // next week plan
+                if(loc3 == -1) {
+                    task = tlist.get(i++);
+                } else {
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    String now = LocalDateTime.now().format(dtf);
+
+                    task.setReportId(idx);
+                    task.setUsername(auth.getName());
+                    task.setSimpleDate(now);
+                    task.setReportType("Weekly");
+                    task.setReportKind("weekly_plan");
+                }
+                task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                task.setExpectedAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                task.setComment(request.getParameter(key));
+                System.out.println(task);
             }
             taskRepository.save(task);
         }
+        Report r = reportRepository.findByReportId(idx);
+        r.setState("Requested");
+        reportRepository.save(r);
 
         return "redirect:/report/detail/"+idx;
     }

@@ -56,29 +56,35 @@ public class ReportController {
     }
 
     @GetMapping("/search") // report 검색해서 보기
-    public String reportSearch(Authentication auth, Model model, @RequestParam("type")String type,
-                               @RequestParam("search")String info) {
+    public String reportSearch(Authentication auth, Model model, HttpServletRequest request) {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
+        String type = request.getParameter("search1");
+        String finding = request.getParameter("searching2");
+        log.info(type + " " + finding);
         List<Report> rlist = new ArrayList<>();
+
         if(type.equals("username")) {
-            rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(info);
+            rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(finding);
         } else if(type.equals("reportTitle")) {
-            rlist = reportRepository.findByReportTitleContainingOrderByWriteDateDesc(info);
+            rlist = reportRepository.findByReportTitleContainingOrderByWriteDateDesc(finding);
         } else if(type.equals("time")) {
-            log.info("Input Time : " + info);
             List<Report> rl = reportRepository.findAllByOrderByUpdatedTimeDesc();
             for(Report rp : rl) {
-                if(info.equals(rp.getWriteDate().toLocalDate().toString())) {
-                    log.info(rp.toString());
+                if(finding.equals(rp.getWriteDate().toLocalDate().toString())) {
                     rlist.add(rp);
                 }
             }
+        } else if (type.equals("type")) {
+            rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(finding);
+        } else if (type.equals("state")) {
+            rlist = reportRepository.findByStateOrderByWriteDateDesc(finding);
         }
+
         model.addAttribute("list",rlist);
         return "report/report_list";
     }

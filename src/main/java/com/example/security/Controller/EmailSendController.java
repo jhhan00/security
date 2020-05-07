@@ -33,8 +33,6 @@ public class EmailSendController {
     @Autowired
     private ReportRepository reportRepository;
 
-    private static String certNumber = "";
-
     @PostMapping("/change_state")
     public String requestEmailAndChangeState(HttpServletRequest request) throws MessagingException {
         Enumeration<String> line = request.getParameterNames();
@@ -68,29 +66,31 @@ public class EmailSendController {
     public String SendEmail(@RequestParam("UserId") String id, Model model) throws MessagingException {
         System.out.println(id);
         GenerateCertNumber ge = new GenerateCertNumber();
-        certNumber = ge.executeGenerate();
-        System.out.println(certNumber);
+        String temp = ge.executeGenerate();
+        System.out.println(temp);
 
         MimeMessage message = mailSender.createMimeMessage();
         message.setSubject("회원가입 인증");
         message.setRecipient(Message.RecipientType.TO, new InternetAddress(id));
-        message.setText("인증번호는 " + certNumber + " 입니다.");
+        message.setText("인증번호는 " + temp + " 입니다.");
         message.setSentDate(new Date());
         mailSender.send(message);
 
         model.addAttribute("UserId",id);
+        model.addAttribute("sendNumber", temp);
 
         return "signUp/cert";
     }
 
     @PostMapping("/request_check")
-    public String CheckNumber(@RequestParam("check_number") String check, @RequestParam("UserId") String id, Model model) {
-        System.out.println("certNumber : "+certNumber);
+    public String CheckNumber(@RequestParam("check_number") String check, @RequestParam("UserId") String id,
+                              @RequestParam("sendNumber")String send, Model model) {
+        System.out.println("sendNumber : "+send);
         System.out.println("check      : "+check);
         System.out.println(id);
         String msg = "";
         boolean success = true;
-        if(check.equals(certNumber)) {
+        if(check.equals(send)) {
             System.out.println("Equal Numbers");
 
             //submit to Database

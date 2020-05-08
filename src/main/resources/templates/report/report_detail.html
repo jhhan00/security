@@ -81,21 +81,42 @@
             </div>
             <div th:if="${info.reportType} == 'Monthly'">
                 <p><strong>이번 달 성과(This Month Result)</strong></p>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Done</th>
-                            <th>Achievement</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="view:${list}" th:if="${view.reportKind} == 'Done'">
-                            <td th:text="${view.done}" class="col-sm-4"></td>
-                            <td th:text="${view.realAchievement} + '%'" class="col-sm-3"></td>
-                            <td th:text="${view.comment}" class="col-sm-5"></td>
-                        </tr>
-                    </tbody>
+                <table class="table table-striped table-bordered" th:each="view:${list}" th:if="${view.reportKind} == 'Done'">
+                    <tr>
+                        <td class="col-sm-3">Project Title</td>
+                        <td colspan="3" th:text="${view.done}"></td>
+                    </tr>
+                    <tr>
+                        <td>Project Start Date</td>
+                        <td th:text="${view.projectStartDate}"></td>
+                        <td class="col-sm-3">Target Date</td>
+                        <td th:text="${view.projectTargetDate}"></td>
+                    </tr>
+                    <tr>
+                        <td>Project Description</td>
+                        <td colspan="3" th:text="${view.comment}"></td>
+                    </tr>
+                    <tr>
+                        <td>Project Summary</td>
+                        <td colspan="3" th:text="${view.progress}"></td>
+                    </tr>
+                    <tr><td colspan="4">Milestone</td></tr>
+                    <tr>
+                        <td>Q1</td>
+                        <td colspan="3" th:text="${view.quarter1}"></td>
+                    </tr>
+                    <tr>
+                        <td>Q2</td>
+                        <td colspan="3" th:text="${view.quarter2}"></td>
+                    </tr>
+                    <tr>
+                        <td>Q3</td>
+                        <td colspan="3" th:text="${view.quarter3}"></td>
+                    </tr>
+                    <tr>
+                        <td>Q4</td>
+                        <td colspan="3" th:text="${view.quarter4}"></td>
+                    </tr>
                 </table><br/>
                 <p><strong>다음 달 계획(Next Month Plan)</strong></p>
                 <table class="table table-striped table-bordered">
@@ -116,35 +137,39 @@
                 </table>
             </div>
             <div th:if="${info.reportType} == 'Yearly'">
-                <p><strong>프로젝트 설명(Project Description)</strong></p>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Project Name</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="view:${list}" th:if="${view.reportKind}=='project_description'">
-                            <td th:text="${view.progress}" class="col-sm-6"></td>
-                            <td th:text="${view.comment}" class="col-sm-6"></td>
-                        </tr>
-                    </tbody>
-                </table><br/>
-                <p><strong>마일스톤(Milestones)</strong></p>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <td>Milestone</td>
-                            <td>Description</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr th:each="view:${list}" th:if="${view.reportKind}=='milestone'">
-                            <td th:text="${view.progress}" class="col-sm-6"></td>
-                            <td th:text="${view.comment}" class="col-sm-6"></td>
-                        </tr>
-                    </tbody>
+                <p><strong>프로젝트 설명(Project Goal Description)</strong></p>
+                <table class="table table-striped table-bordered" th:each="view:${list}">
+                    <tr>
+                        <td class="col-sm-3">Project Title</td>
+                        <td colspan="3" th:text="${view.progress}"></td>
+                    </tr>
+                    <tr>
+                        <td>Project Description</td>
+                        <td colspan="3" th:text="${view.comment}"></td>
+                    </tr>
+                    <tr>
+                        <td>Project Start Date</td>
+                        <td th:text="${view.projectStartDate}"></td>
+                        <td class="col-sm-3">Target Date</td>
+                        <td th:text="${view.projectTargetDate}"></td>
+                    </tr>
+                    <tr><td colspan="4">MileStone</td></tr>
+                    <tr>
+                        <td>Quarter1</td>
+                        <td colspan="3" th:text="${view.quarter1}"></td>
+                    </tr>
+                    <tr>
+                        <td>Quarter2</td>
+                        <td colspan="3" th:text="${view.quarter2}"></td>
+                    </tr>
+                    <tr>
+                        <td>Quarter3</td>
+                        <td colspan="3" th:text="${view.quarter3}"></td>
+                    </tr>
+                    <tr>
+                        <td>Quarter4</td>
+                        <td colspan="3" th:text="${view.quarter4}"></td>
+                    </tr>
                 </table>
             </div>
             <div th:if="${info.reportType} == 'Notice'">

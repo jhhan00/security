@@ -80,8 +80,8 @@
         var count2 = 0;
         function week_result_add(k) {
             var value = "";
-            if(k==1) value = "weekly_result";
-            else if(k==2) value = "another_weekly_result";
+            if(k===1) value = "weekly_result";
+            else if(k===2) value = "another_weekly_result";
 
             var addedform = document.getElementById(value);
             var str =
@@ -90,7 +90,7 @@
                 "<label>Achievement</label>" +
                 "<input type='number' placeholder='1~100' min='1' max='100' name='achievement_" + value + count1 + "'/><br/>" +
                 "<label>Comment</label><br/>" +
-                "<textarea type='text' placeholder='최대 6000자' cols='30' name='comment_" + value + count1 + "'></textarea>";
+                "<textarea type='text' placeholder='최대 5000자' cols='30' name='comment_" + value + count1 + "'></textarea>";
             var div = document.createElement('div');
             div.id = "Added_done" + count1;
             div.innerHTML = str;
@@ -100,8 +100,8 @@
         }
         function week_result_delete(k) {
             var value = "";
-            if(k == 1) value = "weekly_result";
-            else if(k == 2) value = "another_weekly_result";
+            if(k === 1) value = "weekly_result";
+            else if(k === 2) value = "another_weekly_result";
 
             if(count1 > 1) {
                 var addedDiv = document.getElementById("Added_done" + (--count1));
@@ -116,7 +116,7 @@
                 "<label>Expected Achievement</label>" +
                 "<input type='number' placeholder='1~100' min='1' max='100' name='expected_achievement" + count2 + "'/><br/>" +
                 "<label>Description</label><br/>" +
-                "<textarea type='text' placeholder='최대 6000자' cols='30' name='description" + count2 + "'></textarea>";
+                "<textarea type='text' placeholder='최대 5000자' cols='30' name='description" + count2 + "'></textarea>";
             var div = document.createElement('div');
             div.id = "Added_plan" + count2;
             div.innerHTML = str;
@@ -164,7 +164,7 @@
                         <label>Achievement</label>
                         <input type="number" placeholder="1~100" max="100" min="1" th:name="${'achievement'+i.index}" th:value="${done.expectedAchievement}"/><br/>
                         <label>Comment</label><br/>
-                        <textarea type="text" cols="30" placeholder="최대 6000자" th:name="${'comment'+i.index}"></textarea>
+                        <textarea type="text" cols="30" placeholder="최대 5000자" th:name="${'comment'+i.index}"></textarea>
                     </div>
                     <div id="another_weekly_result"></div>
                     <input type="button" value="Add" onclick="week_result_add(2)"/>

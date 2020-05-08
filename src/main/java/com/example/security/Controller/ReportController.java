@@ -177,8 +177,8 @@ public class ReportController {
             //
             System.out.println(request.getParameter(key).length());
             String donedone = request.getParameter(key);
-            if(request.getParameter(key).length() >= 6000) {
-                donedone = donedone.substring(0,6000);
+            if(request.getParameter(key).length() >= 2000) {
+                donedone = donedone.substring(0,2000);
             }
             task.setDone(donedone);
             //
@@ -258,8 +258,8 @@ public class ReportController {
             //
             System.out.println(request.getParameter(key).length());
             String commentcommment = request.getParameter(key);
-            if(commentcommment.length() >= 6000)
-                commentcommment =  commentcommment.substring(0,6000);
+            if(commentcommment.length() >= 2000)
+                commentcommment =  commentcommment.substring(0,1999);
             task.setComment(commentcommment);
             //
             System.out.println(task);
@@ -283,8 +283,9 @@ public class ReportController {
             isNull = false;
         }
 
-        List<Task> tlist = null;
-        if(idx != -1) tlist = taskRepository.findByReportId(idx);
+        List<Task> tlist = new ArrayList<>();
+        if(idx != -1) tlist = taskRepository.findByReportIdAndReportKind(idx, "Next_Month_plan");
+        System.out.println(tlist);
         model.addAttribute("task",tlist);
         model.addAttribute("boolValue",isNull);
         model.addAttribute("oldUrl", request.getHeader("referer"));
@@ -330,20 +331,38 @@ public class ReportController {
                 task.setDone(request.getParameter(key));
                 key = keys.nextElement();
                 task.setRealAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                task.setProjectStartDate(request.getParameter(key));
+                key = keys.nextElement();
+                task.setProjectTargetDate(request.getParameter(key));
+                key = keys.nextElement();
+                task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                //
+                String commentComment = request.getParameter(key);
+                if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,2000);
+                //
+                task.setComment(commentComment);
+                key = keys.nextElement();
+                task.setQuarter1(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter2(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter3(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter4(request.getParameter(key));
             } else if(loc2 == 0) {
                 task.setReportKind("Next_Month_plan");
                 task.setProgress(request.getParameter(key));
                 key = keys.nextElement();
                 task.setExpectedAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                //
+                String commentComment = request.getParameter(key);
+                if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,2000);
+                //
+                task.setComment(commentComment);
             }
-            key = keys.nextElement();
-            //
-            System.out.println(request.getParameter(key).length());
-            String commentcommment = request.getParameter(key);
-            if(commentcommment.length() >= 6000)
-                commentcommment =  commentcommment.substring(0,6000);
-            task.setComment(commentcommment);
-            //
             System.out.println(task);
             taskRepository.save(task);
         }
@@ -390,26 +409,32 @@ public class ReportController {
             String key = keys.nextElement();
             log.info(key + " : " + request.getParameter(key));
             Task task = new Task();
-            int loc1 = key.indexOf("project");
-            int loc2 = key.indexOf("milestone");
             task.setReportId(r_id);
             task.setUsername(auth.getName());
             task.setSimpleDate(nowDate);
             task.setReportType("Yearly");
-            if(loc1==0) {
-                task.setReportKind("project_description");
-            } else if(loc2==0) {
-                task.setReportKind("milestone");
-            }
+            task.setReportKind("project_goal");
             task.setProgress(request.getParameter(key));
             key = keys.nextElement();
             //
-            System.out.println(request.getParameter(key).length());
-            String commentcommment = request.getParameter(key);
-            if(commentcommment.length() >= 6000)
-                commentcommment =  commentcommment.substring(0,6000);
-            task.setComment(commentcommment);
+            String commentCommment = request.getParameter(key);
+            if(commentCommment.length() >= 2000)
+                commentCommment =  commentCommment.substring(0,2000);
+            task.setComment(commentCommment);
             //
+            key = keys.nextElement();
+            task.setProjectStartDate(request.getParameter(key));
+            key = keys.nextElement();
+            task.setProjectTargetDate(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter1(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter2(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter3(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter4(request.getParameter(key));
+
             System.out.println(task);
             taskRepository.save(task);
         }

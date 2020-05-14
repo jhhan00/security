@@ -340,7 +340,7 @@ public class ReportController {
                 key = keys.nextElement();
                 //
                 String commentComment = request.getParameter(key);
-                if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,2000);
+                if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,1999);
                 //
                 task.setComment(commentComment);
                 key = keys.nextElement();
@@ -359,7 +359,7 @@ public class ReportController {
                 key = keys.nextElement();
                 //
                 String commentComment = request.getParameter(key);
-                if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,2000);
+                if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,1999);
                 //
                 task.setComment(commentComment);
             }
@@ -419,7 +419,7 @@ public class ReportController {
             //
             String commentCommment = request.getParameter(key);
             if(commentCommment.length() >= 2000)
-                commentCommment =  commentCommment.substring(0,2000);
+                commentCommment =  commentCommment.substring(0,1999);
             task.setComment(commentCommment);
             //
             key = keys.nextElement();
@@ -472,6 +472,7 @@ public class ReportController {
         report.setState("Approved");
         report.setReportTitle(nowDate + "_Notice");
         System.out.println(report);
+        reportRepository.save(report);
 
         System.out.println(report.getReportId());
         long r_id = report.getReportId();

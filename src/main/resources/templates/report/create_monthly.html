@@ -55,9 +55,9 @@
         function next_month_add() {
             var addedform = document.getElementById('next_month');
             var str =
-                "<label>Plan</label>" +
-                "<input type='text' placeholder='next_month_plan" + count2 + "' name='plan" + count2 + "' />" +
-                "<label>Expected Achievement</label>" +
+                "<label>Plan</label> " +
+                "<input type='text' placeholder='next_month_plan" + count2 + "' name='plan" + count2 + "' /> " +
+                "<label>Expected Achievement</label> " +
                 "<input type='number' placeholder='1~100' min='1' max='100' name='expected_achievement" + count2 + "'/><br/>" +
                 "<label>Description</label><br/>" +
                 "<textarea type='text' placeholder='최대 2000자' cols='30' name='description" + count2 + "'></textarea>";
@@ -96,15 +96,14 @@
         <h5>Create Monthly</h5> <!-- 2020.05.06 대대적인 변경 : 기존 월간보고서와 안 맞아서 다 바꿈 -->
         <div>
             <form th:object="${task}" method="post" action="/report/create/monthly">
+                <label>This Month</label>
                 <div th:if="${boolValue} == true">
-                    <label>This Month</label>
                     <div id="monthly_result"></div>
                     <input type="button" value="Add" onclick="month_result_add(1)"/>
                     <input type="button" value="Delete" onclick="month_result_delete(1)"/>
                 </div>
                 <div th:unless="${boolValue} == true">
                     <div th:each="list, i:${task}">
-                        <label>This Month</label>
                         <div>
                             <label>Project Title</label> <input type="text" th:name="${'done_'+i.index}" th:value="${list.progress}"/>
                             <label>Achievement </label> <input type="number" th:name="${'achievement_'+i.index}" placeholder="1~100" min="1" max="100" th:value="${list.expectedAchievement}"/><br/>
@@ -119,7 +118,7 @@
                             <label>Q2 </label> <input type="text" th:name="${'quarter2_'+i.index}"/><br/>
                             <label>Q3 </label> <input type="text" th:name="${'quarter3_'+i.index}"/><br/>
                             <label>Q4 </label> <input type="text" th:name="${'quarter4_'+i.index}"/><br/>
-                        </div>
+                        </div><br/>
                         <div id="another_result"></div>
                         <input type="button" value="Add" onclick="month_result_add(2)"/>
                         <input type="button" value="Delete" onclick="month_result_delete(2)"/>

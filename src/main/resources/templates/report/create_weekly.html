@@ -85,12 +85,12 @@
 
             var addedform = document.getElementById(value);
             var str =
-                "<label>Done</label>" +
+                "<label>Project Name(한 일의 주제)</label>" +
                 "<input type='text' name='done_" + count1 + "'/>" +
                 "<label>Achievement</label>" +
                 "<input type='number' placeholder='1~100' min='1' max='100' name='achievement_" + value + count1 + "'/><br/>" +
-                "<label>Comment</label><br/>" +
-                "<textarea type='text' placeholder='최대 5000자' cols='30' name='comment_" + value + count1 + "'></textarea>";
+                "<label>Description(한 일의 내용)</label><br/>" +
+                "<textarea type='text' placeholder='최대 5000자' cols='80' name='comment_" + value + count1 + "'></textarea><br/><br/>";
             var div = document.createElement('div');
             div.id = "Added_done" + count1;
             div.innerHTML = str;
@@ -111,12 +111,12 @@
         function next_week_add() {
             var addedform = document.getElementById("next_week");
             var str =
-                "<label>Plan</label>" +
-                "<input type='text' name='plan" + count2 + "' />" +
-                "<label>Expected Achievement</label>" +
+                "<label>Plan</label> " +
+                "<input type='text' name='plan" + count2 + "' /> " +
+                "<label>Expected Achievement</label> " +
                 "<input type='number' placeholder='1~100' min='1' max='100' name='expected_achievement" + count2 + "'/><br/>" +
                 "<label>Description</label><br/>" +
-                "<textarea type='text' placeholder='최대 5000자' cols='30' name='description" + count2 + "'></textarea>";
+                "<textarea type='text' placeholder='최대 5000자' cols='80' name='description" + count2 + "'></textarea><br/><br/>";
             var div = document.createElement('div');
             div.id = "Added_plan" + count2;
             div.innerHTML = str;
@@ -159,13 +159,13 @@
                 </div>
                 <div th:unless="${Valid} == true">
                     <div th:each="done, i:${task}" th:unless="${done.progress} == null">
-                        <label>Done</label>
+                        <label>Project Name(한 일의 주제)</label>
                         <input type="text" th:name="${'done'+i.index}" th:value="${done.progress}" readonly/>
                         <label>Achievement</label>
                         <input type="number" placeholder="1~100" max="100" min="1" th:name="${'achievement'+i.index}" th:value="${done.expectedAchievement}"/><br/>
-                        <label>Comment</label><br/>
-                        <textarea type="text" cols="30" placeholder="최대 5000자" th:name="${'comment'+i.index}"></textarea>
-                    </div>
+                        <label>Description(한 일의 내용)</label><br/>
+                        <textarea type="text" cols="80" placeholder="최대 5000자" th:name="${'comment'+i.index}"></textarea>
+                    </div><br/>
                     <div id="another_weekly_result"></div>
                     <input type="button" value="Add" onclick="week_result_add(2)"/>
                     <input type="button" value="Delete" onclick="week_result_delete(2)"/>

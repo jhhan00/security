@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -35,21 +34,28 @@ public class ReportController {
     TaskRepository taskRepository;
 
     public int LoginOrNot(Authentication authentication) {
-        log.info("auth : " + authentication);
+        // log.info("auth : " + authentication);
         if(authentication == null)  return -1;
         else return 1;
     }
 
-    @GetMapping // report 전체보기
+    @GetMapping // report - 본인 것만 보기 , 단 관리자는 전체 인원 보기
     public String reportList(Model model, Authentication auth) {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        List<Report> list = reportRepository.findAllByOrderByUpdatedTimeDesc();
-        model.addAttribute("list",list);
-
+        List<Report> list;
         //System.out.println(auth.getName() + " in report list");
         Map<String, String> authority = rd.getUserInfo(auth.getName());
+        String role = authority.get("role");
+        if(role.equals("USER")) {
+            list = reportRepository.findByUsernameOrderByUpdatedTime(auth.getName());
+            List<Report> noticeList = reportRepository.findByReportTypeOrderByWriteDateDesc("Notice");
+            list.addAll(noticeList);
+        } else {
+            list = reportRepository.findAllByOrderByUpdatedTimeDesc();
+        }
+        model.addAttribute("list",list);
         model.addAttribute("authority", authority);
 
         return "report/report_list";
@@ -68,21 +74,51 @@ public class ReportController {
         log.info(type + " " + finding);
         List<Report> rlist = new ArrayList<>();
 
-        if(type.equals("username")) {
-            rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(finding);
-        } else if(type.equals("reportTitle")) {
-            rlist = reportRepository.findByReportTitleContainingOrderByWriteDateDesc(finding);
-        } else if(type.equals("time")) {
-            List<Report> rl = reportRepository.findAllByOrderByUpdatedTimeDesc();
-            for(Report rp : rl) {
-                if(finding.equals(rp.getWriteDate().toLocalDate().toString())) {
-                    rlist.add(rp);
-                }
+        if(authority.get("role").equals("USER")) { // User인 경우
+            switch (type) {
+                case "username":
+                    rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(finding);
+                    break;
+                case "reportTitle":
+                    rlist = reportRepository.findByUsernameAndReportTitleContainingOrderByWriteDate(auth.getName(), finding);
+                    break;
+                case "time":
+                    List<Report> rl = reportRepository.findByUsernameOrderByUpdatedTime(auth.getName());
+                    for(Report r : rl) {
+                        if(finding.equals(r.getWriteDate().toLocalDate().toString()))
+                            rlist.add(r);
+                    }
+                    break;
+                case "type":
+                    rlist = reportRepository.findByUsernameAndReportTypeOrderByWriteDateDesc(auth.getName(), finding);
+                    break;
+                case "state":
+                    rlist = reportRepository.findByUsernameAndStateOrderByWriteDateDesc(auth.getName(), finding);
+                    break;
             }
-        } else if (type.equals("type")) {
-            rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(finding);
-        } else if (type.equals("state")) {
-            rlist = reportRepository.findByStateOrderByWriteDateDesc(finding);
+        } else { // Admin인 경우
+            switch (type) {
+                case "username":
+                    rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(finding);
+                    break;
+                case "reportTitle":
+                    rlist = reportRepository.findByReportTitleContainingOrderByWriteDateDesc(finding);
+                    break;
+                case "time":
+                    List<Report> rl = reportRepository.findAllByOrderByUpdatedTimeDesc();
+                    for (Report rp : rl) {
+                        if (finding.equals(rp.getWriteDate().toLocalDate().toString())) {
+                            rlist.add(rp);
+                        }
+                    }
+                    break;
+                case "type":
+                    rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(finding);
+                    break;
+                case "state":
+                    rlist = reportRepository.findByStateOrderByWriteDateDesc(finding);
+                    break;
+            }
         }
 
         model.addAttribute("list",rlist);
@@ -496,7 +532,7 @@ public class ReportController {
     }
 
     @GetMapping("/request_state")
-    public String reviewReport(@RequestParam("rId")String id) throws MessagingException {
+    public String reviewReport(@RequestParam("rId")String id) {
         Report rp = reportRepository.findByReportId(Long.parseLong(id));
         rp.setState("Requested");
         reportRepository.save(rp);

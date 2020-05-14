@@ -26,9 +26,9 @@
                 "<label>Project Start Date</label> <input type='text' placeholder='ex)2020-01-01' name='startDate_" + value + count1 + "'/> " +
                 "<label>Target Date</label> <input type='text' placeholder='ex)2020-01-01' name='targetDate_" + value + count1 + "'/><br/>" +
                 "<label>Project Summary </label><br/>" +
-                "<textarea type='text' placeholder='최대 2000자' cols='40' name='summary_" + value + count1 + "'></textarea><br/>" + <!-- progress로 들어갈 부분 -->
+                "<textarea type='text' placeholder='최대 2000자' cols='80' name='summary_" + value + count1 + "'></textarea><br/>" + <!-- progress로 들어갈 부분 -->
                 "<label>Project Description </label><br/>" +
-                "<textarea type='text' placeholder='최대 2000자' cols='40' name='description_" + value + count1 + "'></textarea>" +  <!-- comment로 들어갈 부분 -->
+                "<textarea type='text' placeholder='최대 2000자' cols='80' name='description_" + value + count1 + "'></textarea>" +  <!-- comment로 들어갈 부분 -->
                 "<div>MileStone</div>" +
                 "<label>Q1 </label> <input type='text' name='quarter1_" + value + count1 + "'/><br/>" +
                 "<label>Q2 </label> <input type='text' name='quarter2_" + value + count1 + "'/><br/>" +
@@ -60,7 +60,7 @@
                 "<label>Expected Achievement</label> " +
                 "<input type='number' placeholder='1~100' min='1' max='100' name='expected_achievement" + count2 + "'/><br/>" +
                 "<label>Description</label><br/>" +
-                "<textarea type='text' placeholder='최대 2000자' cols='30' name='description" + count2 + "'></textarea>";
+                "<textarea type='text' placeholder='최대 2000자' cols='80' name='description" + count2 + "'></textarea>";
             var div = document.createElement('div');
             div.id="Added_plan" + count2;
             div.innerHTML = str;
@@ -110,9 +110,9 @@
                             <label>Project Start Date</label> <input type="text" th:name="${'startDate_'+i.index}" placeholder="ex)2020-01-01"/>
                             <label>Target Date</label> <input type="text" th:name="${'targetDate_'+i.index}" placeholder="ex)2020-01-01"/><br/>
                             <label>Project Summary</label><br/>
-                            <textarea type="text" placeholder="최대 2000자" cols="40" th:name="${'summary_'+i.index}"></textarea><br/>
+                            <textarea type="text" placeholder="최대 2000자" cols="80" th:name="${'summary_'+i.index}"></textarea><br/>
                             <label>Project Description</label><br/>
-                            <textarea type="text" placeholder="최대 2000자" cols="40" th:name="${'description_'+i.index}"></textarea>
+                            <textarea type="text" placeholder="최대 2000자" cols="80" th:name="${'description_'+i.index}"></textarea>
                             <div>MileStone</div>
                             <label>Q1 </label> <input type="text" th:name="${'quarter1_'+i.index}"/><br/>
                             <label>Q2 </label> <input type="text" th:name="${'quarter2_'+i.index}"/><br/>

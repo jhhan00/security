@@ -48,16 +48,16 @@
                 <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
-                        <th class="col-sm-4">Project Name</th>
-                        <th class="col-sm-3">Achievement</th>
-                        <th class="col-sm-5">Done & Description</th>
+                        <th style="width: 20%">Project Name</th>
+                        <th>Done & Description</th>
+                        <th style="width: 10%">Achievement</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="view:${list}" th:if="${view.reportKind} == 'weekly_result'">
-                        <td class="col-sm-4" th:text="${view.done}"></td>
-                        <td class="col-sm-3" th:text="${view.realAchievement} + '%'"></td>
-                        <td class="col-sm-5" th:text="${view.comment}"></td>
+                        <td th:text="${view.done}"></td>
+                        <td th:text="${view.comment}"></td>
+                        <td th:text="${view.realAchievement} + '%'"></td>
                     </tr>
                     </tbody>
                 </table><br/>
@@ -65,16 +65,16 @@
                 <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
-                        <th class="col-sm-4">Progress</th>
-                        <th class="col-sm-3">Expected_Achievement</th>
-                        <th class="col-sm-5">Description</th>
+                        <th style="width: 20%">Progress</th>
+                        <th>Description</th>
+                        <th style="width: 10%">Expected<br/>Achievement</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="view:${list}" th:if="${view.reportKind} == 'weekly_plan'">
-                        <td class="col-sm-4" th:text="${view.progress}"></td>
-                        <td class="col-sm-3" th:text="${view.expectedAchievement} + '%'"></td>
-                        <td class="col-sm-5" th:text="${view.comment}"></td>
+                        <td th:text="${view.progress}"></td>
+                        <td th:text="${view.comment}"></td>
+                        <td th:text="${view.expectedAchievement} + '%'"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -83,13 +83,13 @@
                 <p><strong>이번 달 성과(This Month Result)</strong></p>
                 <table class="table table-striped table-bordered" th:each="view:${list}" th:if="${view.reportKind} == 'Done'">
                     <tr>
-                        <td class="col-sm-3">Project Title</td>
+                        <td style="width: 15%">Project Title</td>
                         <td colspan="3" th:text="${view.done}"></td>
                     </tr>
                     <tr>
                         <td>Project Start Date</td>
                         <td th:text="${view.projectStartDate}"></td>
-                        <td class="col-sm-3">Target Date</td>
+                        <td style="width: 15%">Target Date</td>
                         <td th:text="${view.projectTargetDate}"></td>
                     </tr>
                     <tr>
@@ -122,16 +122,16 @@
                 <table class="table table-striped table-bordered">
                     <thead>
                     <tr>
-                        <th>Progress</th>
-                        <th>Expected_Achievement</th>
+                        <th style="width: 20%">Progress</th>
                         <th>Description</th>
+                        <th style="width: 10%">Expected<br/>Achievement</th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr th:each="view:${list}" th:if="${view.reportKind} == 'Next_Month_plan'">
-                        <td th:text="${view.progress}" class="col-sm-4"></td>
-                        <td th:text="${view.expectedAchievement} + '%'" class="col-sm-3"></td>
-                        <td th:text="${view.comment}" class="col-sm-5"></td>
+                        <td th:text="${view.progress}"></td>
+                        <td th:text="${view.comment}"></td>
+                        <td th:text="${view.expectedAchievement} + '%'"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -140,7 +140,7 @@
                 <p><strong>프로젝트 설명(Project Goal Description)</strong></p>
                 <table class="table table-striped table-bordered" th:each="view:${list}">
                     <tr>
-                        <td class="col-sm-3">Project Title</td>
+                        <td style="width: 15%">Project Title</td>
                         <td colspan="3" th:text="${view.progress}"></td>
                     </tr>
                     <tr>
@@ -150,7 +150,7 @@
                     <tr>
                         <td>Project Start Date</td>
                         <td th:text="${view.projectStartDate}"></td>
-                        <td class="col-sm-3">Target Date</td>
+                        <td style="width: 15%">Target Date</td>
                         <td th:text="${view.projectTargetDate}"></td>
                     </tr>
                     <tr><td colspan="4">MileStone</td></tr>

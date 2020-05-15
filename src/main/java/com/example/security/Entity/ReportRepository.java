@@ -11,7 +11,8 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByReportTitleContainingOrderByWriteDateDesc(String title);  // 제목을 포함해서 찾기 - admin
     List<Report> findAllByOrderByUpdatedTimeDesc();                              // 업데이트 날짜 내림차순으로 찾기
     List<Report> findByReportTypeOrderByWriteDateDesc(String type);              // 타입으로 찾기 - admin
-    List<Report> findByStateOrderByWriteDateDesc(String state);                  // 스테이트로 찾기 - admin
+    List<Report> findByStateOrderByWriteDateDesc(String state);                  // 스테이트로 찾기(작성시간 내림차순) - admin
+    List<Report> findByStateOrderByUpdatedTimeDesc(String state);                // 스테이트로 찾기(업데이트 타임 내림차순) - admin
     List<Report> findByUsernameOrderByUpdatedTime(String username);              // 이름으로 찾기
     List<Report> findByUsernameAndReportTitleContainingOrderByWriteDate(String username, String title); // 이름과 제목으로 찾기 - user
     List<Report> findByUsernameAndReportTypeOrderByWriteDateDesc(String username, String type);         // 이름과 타입으로 찾기 - user

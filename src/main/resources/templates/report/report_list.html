@@ -159,7 +159,10 @@
         </div>
 
         <div class="t-r">
-            <a th:if="${authority.role} == 'ADMIN'" class="btn btn-primary" href="/report/create/notice">Notice</a>
+            <div th:if="${authority.role} == 'ADMIN'">
+                <a class="btn btn-primary" href="/report/create/notice">New<br/>Notice</a>
+                <a class="btn btn-primary" href="/report/requested_only">Requested<br/>Report</a>
+            </div>
             <div th:unless="${authority.role} == 'ADMIN'">
                 <a class="btn btn-primary" href="/report/create/daily">New<br/>Daily</a>
                 <a class="btn btn-primary" href="/report/create/weekly">New<br/>Weekly</a>

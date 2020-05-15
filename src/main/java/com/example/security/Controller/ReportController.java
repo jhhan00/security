@@ -135,7 +135,7 @@ public class ReportController {
         model.addAttribute("authority", authority);
 
         System.out.println(big + " , " + small);
-        List<Report> rlist = null;
+        List<Report> rlist = new ArrayList<>();
         if(big.equals("type")) {
             rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(small);
         } else if(big.equals("state")) {
@@ -165,8 +165,25 @@ public class ReportController {
         return "report/report_detail";
     }
 
+    @GetMapping("/requested_only")
+    public String OnlyRequestedReport(Authentication auth, Model model) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
+        Map<String, String> authority = rd.getUserInfo(auth.getName());
+        model.addAttribute("authority", authority);
+
+        List<Report> rlist = reportRepository.findByStateOrderByUpdatedTimeDesc("Requested");
+        model.addAttribute("list", rlist);
+
+        return "report/report_list";
+    }
+
     @GetMapping("/create/daily")
     public String createDaily(Model model, Authentication auth, HttpServletRequest request) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -227,6 +244,9 @@ public class ReportController {
 
     @GetMapping("/create/weekly")
     public String createWeekly(Authentication auth, Model model, HttpServletRequest request) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -307,6 +327,9 @@ public class ReportController {
 
     @GetMapping("/create/monthly")
     public String createMonthly(Authentication auth, Model model, HttpServletRequest request) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -408,6 +431,9 @@ public class ReportController {
 
     @GetMapping("/create/project_goal")
     public String createProjectGoal(Authentication auth, Model model, HttpServletRequest request) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -480,6 +506,9 @@ public class ReportController {
 
     @GetMapping("/create/notice")
     public String createNotice(Authentication auth, Model model, HttpServletRequest request) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -526,7 +555,6 @@ public class ReportController {
             System.out.println(task);
             taskRepository.save(task);
         }
-        reportRepository.save(report);
 
         return "redirect:/report";
     }
@@ -555,6 +583,9 @@ public class ReportController {
 
     @GetMapping("/modify_daily")
     public String modifyDaily(@RequestParam("reportID")String id, Model model, Authentication auth) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         long r_id = Long.parseLong(id);
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
@@ -600,15 +631,15 @@ public class ReportController {
                 taskRepository.save(task);
             }
         }
-        Report report = reportRepository.findByReportId(idx);
-        report.setState("Requested");
-        reportRepository.save(report);
 
         return "redirect:/report/detail/"+idx;
     }
 
     @GetMapping("/modify_yearly")
     public String modifyYearly(@RequestParam("reportID")String id, Model model, Authentication auth) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -683,15 +714,15 @@ public class ReportController {
             }
             taskRepository.save(task);
         }
-        Report r = reportRepository.findByReportId(idx);
-        r.setState("Requested");
-        reportRepository.save(r);
 
         return "redirect:/report/detail/"+idx;
     }
 
     @GetMapping("/modify_monthly")
     public String modifyMonthly(@RequestParam("reportID")String id, Model model, Authentication auth) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -762,15 +793,15 @@ public class ReportController {
             }
             taskRepository.save(task);
         }
-        Report r = reportRepository.findByReportId(idx);
-        r.setState("Requested");
-        reportRepository.save(r);
 
         return "redirect:/report/detail/"+idx;
     }
 
     @GetMapping("/modify_weekly")
     public String modifyWeekly(@RequestParam("reportID")String id, Model model, Authentication auth) {
+        int loginOrNot = LoginOrNot(auth);
+        if(loginOrNot == -1) return "redirect:/";
+
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
 
@@ -845,9 +876,6 @@ public class ReportController {
             }
             taskRepository.save(task);
         }
-        Report r = reportRepository.findByReportId(idx);
-        r.setState("Requested");
-        reportRepository.save(r);
 
         return "redirect:/report/detail/"+idx;
     }

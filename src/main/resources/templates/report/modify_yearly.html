@@ -10,49 +10,34 @@
     <link rel="stylesheet" href="/bootstrap-reboot.css">
     <link rel="stylesheet" type="text/css" href="/board.css">
     <script>
-        var dscr_count=1;
-        var milestone_count=1;
-        function description_add() {
-            var addedform = document.getElementById('descriptions');
-            var str =
-                "<label>Project Name</label>" +
-                "<input type='text' class='form-control' name='another_project" + dscr_count + "' placeholder='project description'/>" +
-                "<label>Description</label><br/>" +
-                "<textarea type='text' cols='30' placeholder='description' name='project_description" + dscr_count + "'></textarea>";
-            var div = document.createElement('div');
-            div.id="Description" + dscr_count;
+        let count1 = 1;
+        function add () {
+            const addedForm = document.getElementById('another_project_goal');
+            const str =
+                "<br/><label><strong>Project Name</strong></label>" +
+                "<input type='text' class='form-control' name='another_project" + count1 + "' />" +
+                "<label><strong>Description</strong></label><br/>" +
+                "<textarea type='text' cols='80' placeholder='최대 2000자' name='another_project_description" + count1 + "'></textarea><br/>" +
+                "<label>Project Start Date</label> <input type='text' placeholder='ex)2020-01-01' name='another_startDate" + count1 + "'/> " +
+                "<label>Target Date</label> <input type='text' placeholder='ex)2020-01-01' name='another_TargetDate" + count1 + "'/>" +
+                "<div><strong>Milestone</strong></div>" +
+                "<label>Quarter1</label>" + "<input class='form-control' type='text' name='another_quarter1_" + count1 + "'/> " +
+                "<label>Quarter2</label>" + "<input class='form-control' type='text' name='another_quarter2_" + count1 + "'/>" +
+                "<label>Quarter3</label>" + "<input class='form-control' type='text' name='another_quarter3_" + count1 + "'/>" +
+                "<label>Quarter4</label>" + "<input class='form-control' type='text' name='another_quarter4_" + count1 + "'/>";
+            const div = document.createElement('div');
+            div.id = "AnotherProjectGoal" + count1;
             div.innerHTML = str;
-            addedform.appendChild(div);
+            addedForm.appendChild(div);
 
-            dscr_count++; console.log(dscr_count);
+            count1++; console.log(count1);
         }
-        function description_delete() {
-            if(dscr_count > 1) {
-                var addedDiv = document.getElementById("Description" + (--dscr_count));
-                document.getElementById('descriptions').removeChild(addedDiv);
+        function remove () {
+            if(count1 > 1) {
+                let addedDiv = document.getElementById("AnotherProjectGoal" + (--count1));
+                document.getElementById('another_project_goal').removeChild(addedDiv);
             }
-            console.log(dscr_count);
-        }
-        function milestone_add() {
-            var addedform = document.getElementById('milestones');
-            var str =
-                "<label>Milestone</label>" +
-                "<input type='text' class='form-control' name='another_milestone" + milestone_count + "' placeholder='milestone'/>" +
-                "<label>Description</label><br/>" +
-                "<textarea type='text' cols='30' placeholder='description' name='milestone_description" + milestone_count + "'></textarea>";
-            var div = document.createElement('div');
-            div.id = "Milestone" + milestone_count;
-            div.innerHTML = str;
-            addedform.appendChild(div);
-
-            milestone_count++; console.log(milestone_count);
-        }
-        function milestone_delete() {
-            console.log(milestone_count);
-            if(milestone_count > 1) {
-                var addedDiv = document.getElementById("Milestone" + (--milestone_count));
-                document.getElementById('milestones').removeChild(addedDiv);
-            }
+            console.log(count1);
         }
     </script>
 </head>
@@ -72,29 +57,23 @@
             <h5>Yearly Report Modify</h5><br/>
             <form method="post" action="/report/modify_yearly">
                 <input type="hidden" name="reportID" th:value="${reportID}"/>
-                <p>Project Description</p>
-                <div th:each="view, i:${list}" th:if="${view.reportKind}=='project_description'">
-                    <label>Project name</label>
+                <div th:each="view, i:${list}">
+                    <label><strong>Project Name</strong></label>
                     <input type="text" class="form-control" th:name="${'project'+i.index}" th:value="${view.progress}"/>
-                    <label>Description</label><br/>
-                    <textarea type="text" cols="30" placeholder="description" th:name="${'description'+i.index}"></textarea>
-                </div>
-                <div>
-                    <div id="descriptions"></div>
-                    <input type="button" value="Add" onclick="description_add()"/>
-                    <input type="button" value="Delete" onclick="description_delete()"/>
+                    <label><strong>Description</strong></label><br/>
+                    <textarea type="text" cols="80" placeholder="최대 2000자" th:name="${'description'+i.index}"></textarea><br/>
+                    <label>Project Start Date</label> <input type="text" placeholder="ex) 2020-01-01" th:name="${'startDate'+i.index}" th:value="${view.projectStartDate}"/>
+                    <label>Target Date</label> <input type="text" placeholder="ex) 2020-01-01" th:name="${'targetDate'+i.index}" th:value="${view.projectTargetDate}"/>
+                    <div><strong>Milestone</strong></div>
+                    <label>Quarter1</label> <input class="form-control" type="text" th:name="${'quarter1_'+i.index}" th:value="${view.quarter1}"/>
+                    <label>Quarter2</label> <input class="form-control" type="text" th:name="${'quarter2_'+i.index}" th:value="${view.quarter2}"/>
+                    <label>Quarter3</label> <input class="form-control" type="text" th:name="${'quarter3_'+i.index}" th:value="${view.quarter3}"/>
+                    <label>Quarter4</label> <input class="form-control" type="text" th:name="${'quarter4_'+i.index}" th:value="${view.quarter4}"/>
                 </div><br/>
-                <p>MileStones</p>
-                <div th:each="view, i:${list}" th:if="${view.reportKind}=='milestone'">
-                    <label>milestone</label>
-                    <input type="text" class="form-control" th:name="${'milestone'+i.index}" th:value="${view.progress}"/>
-                    <label>Description</label><br/>
-                    <textarea type="text" cols="30" placeholder="description" th:name="${'description'+i.index}"></textarea>
-                </div>
                 <div>
-                    <div id="milestones"></div>
-                    <input type="button" value="Add" onclick="milestone_add()"/>
-                    <input type="button" value="Delete" onclick="milestone_delete()"/>
+                    <div id="another_project_goal"></div>
+                    <input type="button" value="Add" onclick="add()"/>
+                    <input type="button" value="Delete" onclick="remove()" />
                 </div><br/>
                 <button class="btn btn-primary" type="submit">Modify</button>
             </form>

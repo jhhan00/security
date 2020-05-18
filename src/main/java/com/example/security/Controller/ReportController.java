@@ -617,7 +617,7 @@ public class ReportController {
                 task.setDone(request.getParameter(key));
                 taskRepository.save(task);
                 i++;
-            } else if(i == tlist.size()) {
+            } else {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
                 String now = LocalDateTime.now().format(dtf);
 
@@ -660,58 +660,44 @@ public class ReportController {
 
         List<Task> tlist = taskRepository.findByReportId(idx);
         int i=0;
-
+//
         while(keys.hasMoreElements()) {
             key = keys.nextElement();
-            int loc1 = key.indexOf("project");
-            int loc2 = key.indexOf("milestone");
-            int loc3 = key.indexOf("another");
             log.info(key+"_:_"+request.getParameter(key));
             Task task = new Task();
+            if(i != tlist.size()) {
+                task = tlist.get(i++);
+            } else {
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                String now = LocalDateTime.now().format(dtf);
 
-            if(loc1 != -1) { // project_description일 때
-                if(loc3 == -1) {
-                    task = tlist.get(i++);
-                    task.setProgress(request.getParameter(key));
-                    key = keys.nextElement();
-                    task.setComment(request.getParameter(key));
-                    System.out.println(task);
-                } else {
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
-                    String now = LocalDateTime.now().format(dtf);
-
-                    task.setReportId(idx);
-                    task.setUsername(auth.getName());
-                    task.setSimpleDate(now);
-                    task.setReportType("Yearly");
-                    task.setReportKind("project_description");
-                    task.setProgress(request.getParameter(key));
-                    key = keys.nextElement();
-                    task.setComment(request.getParameter(key));
-                    System.out.println(task);
-                }
-            } else if(loc2 != -1) { // milestone일 때
-                if(loc3 == -1) {
-                    task = tlist.get(i++);
-                    task.setProgress(request.getParameter(key));
-                    key = keys.nextElement();
-                    task.setComment(request.getParameter(key));
-                    System.out.println(task);
-                } else {
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
-                    String now = LocalDateTime.now().format(dtf);
-
-                    task.setReportId(idx);
-                    task.setUsername(auth.getName());
-                    task.setSimpleDate(now);
-                    task.setReportType("Yearly");
-                    task.setReportKind("milestone");
-                    task.setProgress(request.getParameter(key));
-                    key = keys.nextElement();
-                    task.setComment(request.getParameter(key));
-                    System.out.println(task);
-                }
+                task.setReportId(idx);
+                task.setUsername(auth.getName());
+                task.setSimpleDate(now);
+                task.setReportType("Yearly");
+                task.setReportKind("project_goal");
             }
+            task.setProgress(request.getParameter(key));
+            key = keys.nextElement();
+            //
+            String commentComment = request.getParameter(key);
+            if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,1999);
+            task.setComment(commentComment);
+            //
+            key = keys.nextElement();
+            task.setProjectStartDate(request.getParameter(key));
+            key = keys.nextElement();
+            task.setProjectTargetDate(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter1(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter2(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter3(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter4(request.getParameter(key));
+
+            System.out.println(task);
             taskRepository.save(task);
         }
 

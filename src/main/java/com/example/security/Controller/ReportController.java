@@ -49,7 +49,7 @@ public class ReportController {
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         String role = authority.get("role");
         if(role.equals("USER")) {
-            list = reportRepository.findByUsernameOrderByUpdatedTime(auth.getName());
+            list = reportRepository.findByUsernameOrderByUpdatedTimeDesc(auth.getName());
             List<Report> noticeList = reportRepository.findByReportTypeOrderByWriteDateDesc("Notice");
             list.addAll(noticeList);
         } else {
@@ -83,7 +83,7 @@ public class ReportController {
                     rlist = reportRepository.findByUsernameAndReportTitleContainingOrderByWriteDate(auth.getName(), finding);
                     break;
                 case "time":
-                    List<Report> rl = reportRepository.findByUsernameOrderByUpdatedTime(auth.getName());
+                    List<Report> rl = reportRepository.findByUsernameOrderByUpdatedTimeDesc(auth.getName());
                     for(Report r : rl) {
                         if(finding.equals(r.getWriteDate().toLocalDate().toString()))
                             rlist.add(r);
@@ -738,9 +738,10 @@ public class ReportController {
             int loc3 = key.indexOf("another");
             Task task = new Task();
             if(loc1 != -1) { // this month result
-                if(loc3 == -1) {
+                if(loc3 == -1) { // 이미 있는 done을 수정
                     task = tlist.get(i++);
-                } else {
+                    task.setReportKind("Done");
+                } else { // 새롭게 done 추가
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
                     String now = LocalDateTime.now().format(dtf);
 
@@ -749,18 +750,35 @@ public class ReportController {
                     task.setSimpleDate(now);
                     task.setReportType("Monthly");
                     task.setReportKind("Done");
-
                 }
                 task.setDone(request.getParameter(key));
                 key = keys.nextElement();
                 task.setRealAchievement(request.getParameter(key));
                 key = keys.nextElement();
-                task.setComment(request.getParameter(key));
-                System.out.println(task);
+                task.setProjectStartDate(request.getParameter(key));
+                key = keys.nextElement();
+                task.setProjectTargetDate(request.getParameter(key));
+                key = keys.nextElement();
+                task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                //
+                String commentComment = request.getParameter(key);
+                if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,1999);
+                //
+                task.setComment(commentComment);
+                key = keys.nextElement();
+                task.setQuarter1(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter2(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter3(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter4(request.getParameter(key));
             } else if(loc2 != -1) { // next month plan
-                if(loc3 == -1) {
+                if(loc3 == -1) { // 이미 있는 plan을 수정
                     task = tlist.get(i++);
-                } else {
+                    task.setReportKind("Next_Month_plan");
+                } else { // 새롭게 plan 추가
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
                     String now = LocalDateTime.now().format(dtf);
 
@@ -774,9 +792,13 @@ public class ReportController {
                 key = keys.nextElement();
                 task.setExpectedAchievement(request.getParameter(key));
                 key = keys.nextElement();
-                task.setComment(request.getParameter(key));
-                System.out.println(task);
+                //
+                String commentComment = request.getParameter(key);
+                if(commentComment.length() >= 2000) commentComment = commentComment.substring(0,1999);
+                //
+                task.setComment(commentComment);
             }
+            System.out.println(task);
             taskRepository.save(task);
         }
 

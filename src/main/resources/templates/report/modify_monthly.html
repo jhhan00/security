@@ -15,12 +15,19 @@
         function this_month_add() {
             var addedform = document.getElementById("Another_month_result");
             var str =
-                "<label>Done </label>" +
-                "<input type='text' name='another_done" + this_month_count + "'/>" +
-                "<label> Achievement </label>" +
-                "<input type='number' name='another_real_achievement" + this_month_count + "' placeholder='1~100' min='1' max='100'/><br/>" +
-                "<label>Comment</label><br/>" +
-                "<textarea type='text' cols='30' name='another_comment" + this_month_count + "' placeholder='comment'></textarea>";
+                "<label>Project Name</label> <input type='text' name='another_done" + this_month_count + "'/> " +
+                "<label>Achievement</label> <input type='number' placeholder='1~100' min='1' max='100' name='another_achievement_" + this_month_count + "'/><br/>" +
+                "<label>Project Start Date</label> <input type='text' placeholder='ex)2020-01-01' name='another_startDate_" + this_month_count + "'/> " +
+                "<label>Target Date</label> <input type='text' placeholder='ex)2020-01-01' name='another_targetDate_" + this_month_count + "'/><br/>" +
+                "<label>Project Summary</label><br/>" +
+                "<textarea type='text' placeholder='최대 2000자' cols='80' name='another_summary_" + this_month_count + "'></textarea><br/>" + <!-- progress로 들어갈 부분 -->
+                "<label>Project Description</label><br/>" +
+                "<textarea type='text' cols='80' name='another_comment" + this_month_count + "' placeholder='최대 2000자'></textarea><br/>" + <!-- comment로 들어갈 부분 -->
+                "<div>MileStone</div>" +
+                "<label>Q1</label> <input type='text' name='another_quarter1_" + this_month_count + "'/><br/>" +
+                "<label>Q2</label> <input type='text' name='another_quarter2_" + this_month_count + "'/><br/>" +
+                "<label>Q3</label> <input type='text' name='another_quarter3_" + this_month_count + "'/><br/>" +
+                "<label>Q4</label> <input type='text' name='another_quarter4_" + this_month_count + "'/><br/><br/>"
             var div = document.createElement('div');
             div.id="Added_done" + this_month_count;
             div.innerHTML = str;
@@ -43,7 +50,7 @@
                 "<label>Expected Achievement</label>" +
                 "<input type='number' name='another_expected_achievement" + next_month_count + "' placeholder='1~100' min='1' max='100'/><br/>" +
                 "<label>Comment</label><br/>" +
-                "<textarea type='text' cols='30' name='another_description" + next_month_count + "' placeholder='comment'></textarea>";
+                "<textarea type='text' cols='80' name='another_description" + next_month_count + "' placeholder='최대 2000자'></textarea><br/><br/>";
             var div = document.createElement('div');
             div.id="Added_plan" + next_month_count;
             div.innerHTML = str;
@@ -78,12 +85,20 @@
                 <input type="hidden" name="reportID" th:value="${reportID}"/>
                 <p><h6>This Month Result</h6></p>
                 <div th:each="view, i:${list}" th:if="${view.reportKind}=='Done'">
-                    <label>Done</label>
-                    <input type="text" th:name="${'done'+i.index}" th:value="${view.done}"/>
+                    <label>Project Name</label> <input type="text" th:name="${'done'+i.index}" th:value="${view.done}"/>
                     <label>Achievement</label>
                     <input type="number" placeholder="1~100" min="1" max="100" th:name="${'achievement'+i.index}" th:value="${view.realAchievement}"/><br/>
-                    <label>Comment</label><br/>
-                    <textarea type="text" cols="30" th:name="${'comment'+i.index}" placeholder="comment"></textarea>
+                    <label>Project Start Date</label> <input type="text" th:name="${'startDate'+i.index}" th:value="${view.projectStartDate}" placeholder="ex)2020-01-01"/>
+                    <label>Target Date</label> <input type="text" th:name="${'targetDate'+i.index}" th:value="${view.projectTargetDate}" placeholder="ex)2020-01-01"/><br/>
+                    <label>Project Summary </label><br/>
+                    <textarea type="text" placeholder="최대 2000자" cols="80" th:name="${'summary'+i.index}"></textarea><br/>
+                    <label>Project Description</label><br/>
+                    <textarea type="text" cols="80" th:name="${'comment'+i.index}" placeholder="최대 2000자"></textarea>
+                    <div>Milestone</div>
+                    <label>Q1</label> <input type="text" th:name="${'quarter1_'+i.index}" th:value="${view.quarter1}"/><br/>
+                    <label>Q2</label> <input type="text" th:name="${'quarter2_'+i.index}" th:value="${view.quarter2}"/><br/>
+                    <label>Q3</label> <input type="text" th:name="${'quarter3_'+i.index}" th:value="${view.quarter3}"/><br/>
+                    <label>Q4</label> <input type="text" th:name="${'quarter4_'+i.index}" th:value="${view.quarter4}"/><br/><br/>
                 </div>
                 <div>
                     <div id="Another_month_result"></div>
@@ -97,8 +112,8 @@
                         <input type="text" th:name="${'plan'+i.index}" th:value="${view.progress}"/>
                         <label>Expected Achievement</label>
                         <input type="number" placeholder="1~100" min="1" max="100" th:name="${'achievement'+i.index}" th:value="${view.expectedAchievement}"/><br/>
-                        <label>Comment</label><br/>
-                        <textarea type="text" cols="30" th:name="${'comment'+i.index}" placeholder="comment"></textarea>
+                        <label>Description</label><br/>
+                        <textarea type="text" cols="80" th:name="${'comment'+i.index}" placeholder="comment"></textarea><br/><br/>
                     </div>
                     <div id="Next_month_plan"></div>
                     <input type="button" value="Add" onclick="next_month_add()"/>

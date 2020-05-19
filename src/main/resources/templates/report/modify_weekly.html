@@ -20,7 +20,7 @@
                 "<label>Expected Achievement</label>" +
                 "<input type='number' name='another_expected_achievement" + plan_count + "' placeholder='1~100' min='1' max='100'/><br/>" +
                 "<label>Comment</label><br/>" +
-                "<textarea type='text' cols='30' name='another_comment" + plan_count + "' placeholder='최대 6000자'></textarea>";
+                "<textarea type='text' cols='80' name='another_comment" + plan_count + "' placeholder='최대 2000자'></textarea>";
             var div = document.createElement('div');
             div.id="Added_plan" + plan_count;
             div.innerHTML = str;
@@ -43,7 +43,7 @@
                 "<label>Achievement</label>" +
                 "<input type='number' name='another_real_achievement" + result_count + "' placeholder='1~100' min='1' max='100'/><br/>" +
                 "<label>Comment</label><br/>" +
-                "<textarea type='text' cols='30' name='another_description" + result_count + "' placeholder='최대 6000자'></textarea>";
+                "<textarea type='text' cols='80' name='another_description" + result_count + "' placeholder='최대 2000자'></textarea>";
             var div = document.createElement('div');
             div.id="Added_result" + result_count;
             div.innerHTML = str;
@@ -83,7 +83,7 @@
                     <label>Achievement</label>
                     <input type="number" placeholder="1~100" min="1" max="100" th:name="${'achievement'+i.index}" th:value="${view.realAchievement}"/><br/>
                     <label>Comment</label><br/>
-                    <textarea type="text" cols="30" th:name="${'comment'+i.index}" placeholder="최대 6000자"></textarea>
+                    <textarea type="text" cols="80" th:name="${'comment'+i.index}" placeholder="최대 2000자"></textarea>
                 </div>
                 <div>
                     <div id="another_week_result"></div>
@@ -98,7 +98,7 @@
                         <label>Expected Achievement</label>
                         <input type="number" placeholder="1~100" min="1" max="100" th:name="${'achievement'+i.index}" th:value="${view.expectedAchievement}"/><br/>
                         <label>Comment</label><br/>
-                        <textarea type="text" cols="30" th:name="${'comment'+i.index}" placeholder="최대 6000자"></textarea>
+                        <textarea type="text" cols="80" th:name="${'comment'+i.index}" placeholder="최대 2000자"></textarea>
                     </div>
                     <div id="another_week_plan"></div>
                     <input type="button" value="Add" onclick="next_week_add()"/>

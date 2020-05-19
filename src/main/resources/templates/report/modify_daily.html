@@ -14,8 +14,8 @@
         function add() {
             var addedform = document.getElementById('field');
             var str =
-                "<label>Daily_Done</label>"+
-                "<input type=\"text\" class=\"form-control\" name=\"daily_done" + count + " \" />";
+                "<label>Daily_Done</label><br/>"+
+                "<textarea type='text' placeholder='최대 2000자' name='another_done" + count + "' cols='80'></textarea><br/><br/>";
             var div = document.createElement('div');
             div.id="added" + count;
             div.innerHTML = str;
@@ -50,7 +50,7 @@
                 <input type="hidden" name="reportID" th:value="${reportID}"/>
                 <div th:each="view, i:${list}">
                     <label>Daily_Done</label>
-                    <input type="text" class="form-control" th:name="${'done'+i.index}" th:value="${view.done}"/>
+                    <input type="text" class="form-control" th:name="${'done'+i.index}" th:value="${view.done}"/><br/>
                 </div>
                 <div>
                     <div id="field"></div>

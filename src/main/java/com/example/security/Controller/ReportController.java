@@ -615,7 +615,6 @@ public class ReportController {
             if(i != tlist.size()) {
                 task = tlist.get(i);
                 task.setDone(request.getParameter(key));
-                taskRepository.save(task);
                 i++;
             } else {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -628,8 +627,8 @@ public class ReportController {
                 task.setReportKind("Done");
                 task.setDone(request.getParameter(key));
 //                System.out.println(task);
-                taskRepository.save(task);
             }
+            taskRepository.save(task);
         }
 
         return "redirect:/report/detail/"+idx;
@@ -854,8 +853,8 @@ public class ReportController {
                     task.setUsername(auth.getName());
                     task.setSimpleDate(now);
                     task.setReportType("Weekly");
-                    task.setReportKind("weekly_result");
                 }
+                task.setReportKind("weekly_result");
                 task.setDone(request.getParameter(key));
                 key = keys.nextElement();
                 task.setRealAchievement(request.getParameter(key));
@@ -873,8 +872,8 @@ public class ReportController {
                     task.setUsername(auth.getName());
                     task.setSimpleDate(now);
                     task.setReportType("Weekly");
-                    task.setReportKind("weekly_plan");
                 }
+                task.setReportKind("weekly_plan");
                 task.setProgress(request.getParameter(key));
                 key = keys.nextElement();
                 task.setExpectedAchievement(request.getParameter(key));

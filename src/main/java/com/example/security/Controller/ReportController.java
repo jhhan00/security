@@ -581,12 +581,21 @@ public class ReportController {
         return "redirect:/report";
     }
 
+    public int RequestedOrNot(long id) {
+        Report r = reportRepository.findByReportId(id);
+        if(r.getState().equals("Requested") || r.getState().equals("Approved"))
+            return -1;
+        return 1;
+    }
+
     @GetMapping("/modify_daily")
     public String modifyDaily(@RequestParam("reportID")String id, Model model, Authentication auth) {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
         long r_id = Long.parseLong(id);
+        if(RequestedOrNot(r_id) == -1) return "redirect:/report/detail/" + r_id;
+
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
 
@@ -643,6 +652,8 @@ public class ReportController {
         model.addAttribute("authority", authority);
 
         long r_id = Long.parseLong(id);
+        if(RequestedOrNot(r_id) == -1) return "redirect:/report/detail/" + r_id;
+
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
         model.addAttribute("reportID",id);
@@ -712,6 +723,8 @@ public class ReportController {
         model.addAttribute("authority", authority);
 
         long r_id = Long.parseLong(id);
+        if(RequestedOrNot(r_id) == -1) return "redirect:/report/detail/" + r_id;
+
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
         model.addAttribute("reportID",id);
@@ -813,6 +826,8 @@ public class ReportController {
         model.addAttribute("authority", authority);
 
         long r_id = Long.parseLong(id);
+        if(RequestedOrNot(r_id) == -1) return "redirect:/report/detail/" + r_id;
+
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
         model.addAttribute("reportID",id);

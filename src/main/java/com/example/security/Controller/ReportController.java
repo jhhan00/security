@@ -752,7 +752,6 @@ public class ReportController {
             if(loc1 != -1) { // this month result
                 if(loc3 == -1) { // 이미 있는 done을 수정
                     task = tlist.get(i++);
-                    task.setReportKind("Done");
                 } else { // 새롭게 done 추가
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
                     String now = LocalDateTime.now().format(dtf);
@@ -761,8 +760,9 @@ public class ReportController {
                     task.setUsername(auth.getName());
                     task.setSimpleDate(now);
                     task.setReportType("Monthly");
-                    task.setReportKind("Done");
                 }
+                task.setExpectedAchievement(null);
+                task.setReportKind("Done");
                 task.setDone(request.getParameter(key));
                 key = keys.nextElement();
                 task.setRealAchievement(request.getParameter(key));
@@ -789,7 +789,6 @@ public class ReportController {
             } else if(loc2 != -1) { // next month plan
                 if(loc3 == -1) { // 이미 있는 plan을 수정
                     task = tlist.get(i++);
-                    task.setReportKind("Next_Month_plan");
                 } else { // 새롭게 plan 추가
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
                     String now = LocalDateTime.now().format(dtf);
@@ -798,8 +797,10 @@ public class ReportController {
                     task.setUsername(auth.getName());
                     task.setSimpleDate(now);
                     task.setReportType("Monthly");
-                    task.setReportKind("Next_Month_plan");
                 }
+                task.setDone(null); task.setRealAchievement(null); task.setProjectStartDate(null); task.setProjectTargetDate(null);
+                task.setQuarter1(null); task.setQuarter2(null); task.setQuarter3(null); task.setQuarter4(null);
+                task.setReportKind("Next_Month_plan");
                 task.setProgress(request.getParameter(key));
                 key = keys.nextElement();
                 task.setExpectedAchievement(request.getParameter(key));
@@ -831,11 +832,6 @@ public class ReportController {
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
         model.addAttribute("reportID",id);
-
-//        System.out.println(tlist.get(tlist.size()-1));
-//        boolean planOrResult = false;
-//        if(tlist.get(tlist.size()-1).getReportKind().equals("weekly_result")) planOrResult = true;
-//        model.addAttribute("isTrue",planOrResult);
 
         return "report/modify_weekly";
     }
@@ -870,6 +866,7 @@ public class ReportController {
                     task.setReportType("Weekly");
                 }
                 task.setReportKind("weekly_result");
+                task.setProgress(null); task.setExpectedAchievement(null);
                 task.setDone(request.getParameter(key));
                 key = keys.nextElement();
                 task.setRealAchievement(request.getParameter(key));
@@ -889,6 +886,7 @@ public class ReportController {
                     task.setReportType("Weekly");
                 }
                 task.setReportKind("weekly_plan");
+                task.setDone(null); task.setRealAchievement(null);
                 task.setProgress(request.getParameter(key));
                 key = keys.nextElement();
                 task.setExpectedAchievement(request.getParameter(key));

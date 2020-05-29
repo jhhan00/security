@@ -26,53 +26,6 @@
             })
         });
 
-        // function categoryChange(s) {
-        //     var category1 = ["Notice", "Daily", "Weekly", "Monthly", "Yearly"];
-        //     var category2 = ["Waiting", "Requested", "Approved"];
-        //     var target = document.getElementById("select2")
-        //
-        //     var selected = "";
-        //     if(s.value == "type") selected=category1;
-        //     else if(s.value == "state") selected = category2;
-        //     target.options.length = 0;
-        //
-        //     for(x in selected) {
-        //         var opt = document.createElement("option");
-        //         opt.value = selected[x];
-        //         opt.innerHTML = selected[x];
-        //         target.appendChild(opt);
-        //     }
-        // }
-        //
-        // var count=1;
-        // function inputBoxChange(s) {
-        //     if(count == 1) {
-        //         var target = document.getElementById("searching");
-        //         document.getElementById('result').removeChild(target);
-        //         count--;
-        //     }
-        //     var selected = "";
-        //     if(s.value == "username") selected = "Username";
-        //     else if(s.value == "reportTitle") selected = "Report Title";
-        //     else if(s.value == "time") selected = "ex) 2020-01-01";
-        //
-        //     count++;
-        //     var tg = document.getElementById("result");
-        //     var inp = document.createElement("input");
-        //     inp.placeholder = selected;
-        //     inp.type = "text";
-        //     inp.name = "search";
-        //     inp.id = "searching";
-        //     tg.appendChild(inp);
-        //
-        //     if(s.value=="time") {
-        //         $(function() {
-        //             $("#searching").datepicker({
-        //                 dateFormat: 'yy-mm-dd'
-        //             });
-        //         });
-        //     }
-        // }
         function chooseSelected(s) {
             var target = document.getElementById('searching2');
             document.getElementById('result2').removeChild(target);
@@ -100,7 +53,7 @@
 
             if(selected === "Type" || selected === "state") {
                 var category1 = ["Notice", "Daily", "Weekly", "Monthly", "Yearly"];
-                var category2 = ["Waiting", "Requested", "Approved"];
+                var category2 = ["Waiting", "Requested", "Approved", "Rejected"];
                 target = document.getElementById("searching2");
 
                 var category = "";

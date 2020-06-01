@@ -85,6 +85,8 @@ public class EmailSendController {
     @PostMapping("/request_check")
     public String CheckNumber(@RequestParam("check_number") String check, @RequestParam("UserId") String id,
                               @RequestParam("sendNumber")String send, Model model) {
+        send = send.trim();
+        check = check.trim();
         System.out.println("sendNumber : "+send);
         System.out.println("check      : "+check);
         System.out.println(id);

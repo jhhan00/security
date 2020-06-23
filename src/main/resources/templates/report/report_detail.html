@@ -66,7 +66,7 @@
                         <td th:text="${view.done}"></td>
 <!--                        <td><pre th:text="${view.comment}"></pre></td>-->
 <!--                        <td id="weekly_report_result" th:text="${view.comment}" ></td>-->
-                        <td><textarea readonly cols="80" rows="8" th:text="${view.comment}"></textarea></td>
+                        <td><textarea readonly cols="100" rows="8" th:text="${view.comment}"></textarea></td>
                         <td th:text="${view.realAchievement} + '%'"></td>
                     </tr>
                     </tbody>
@@ -84,7 +84,7 @@
                     <tr th:each="view:${list}" th:if="${view.reportKind} == 'weekly_plan'">
                         <td th:text="${view.progress}"></td>
 <!--                        <td th:text="${view.comment}"></td>-->
-                        <td><textarea readonly cols="80" rows="8" th:text="${view.comment}"></textarea></td>
+                        <td><textarea readonly cols="100" rows="8" th:text="${view.comment}"></textarea></td>
                         <td th:text="${view.expectedAchievement} + '%'"></td>
                     </tr>
                     </tbody>
@@ -106,12 +106,12 @@
                     <tr>
                         <td>Project Description</td>
 <!--                        <td colspan="3" th:text="${view.comment}"></td>-->
-                        <td><textarea readonly cols="80" rows="10" th:text="${view.comment}"></textarea></td>
+                        <td colspan="3"><textarea readonly cols="120" rows="10" th:text="${view.comment}"></textarea></td>
                     </tr>
                     <tr>
                         <td>Project Summary</td>
 <!--                        <td colspan="3" th:text="${view.progress}"></td>-->
-                        <td><textarea readonly cols="80" rows="10" th:text="${view.progress}"></textarea></td>
+                        <td colspan="3"><textarea readonly cols="120" rows="10" th:text="${view.progress}"></textarea></td>
                     </tr>
                     <tr><td colspan="4">Milestone</td></tr>
                     <tr>
@@ -144,7 +144,7 @@
                     <tr th:each="view:${list}" th:if="${view.reportKind} == 'Next_Month_plan'">
                         <td th:text="${view.progress}"></td>
 <!--                        <td th:text="${view.comment}"></td>-->
-                        <td><textarea readonly cols="80" rows="5" th:text="${view.comment}"></textarea></td>
+                        <td><textarea readonly cols="100" rows="5" th:text="${view.comment}"></textarea></td>
                         <td th:text="${view.expectedAchievement} + '%'"></td>
                     </tr>
                     </tbody>
@@ -159,7 +159,8 @@
                     </tr>
                     <tr>
                         <td>Project Description</td>
-                        <td colspan="3" th:text="${view.comment}"></td>
+<!--                        <td colspan="3" th:text="${view.comment}"></td>-->
+                        <td colspan="3"><textarea readonly cols="120" rows="5" th:text="${view.comment}"></textarea></td>
                     </tr>
                     <tr>
                         <td>Project Start Date</td>

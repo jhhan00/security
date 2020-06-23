@@ -83,7 +83,7 @@
                     <label>Achievement</label>
                     <input type="number" placeholder="1~100" min="1" max="100" th:name="${'achievement'+i.index}" th:value="${view.realAchievement}"/><br/>
                     <label>Comment</label><br/>
-                    <textarea type="text" cols="80" th:name="${'comment'+i.index}" placeholder="최대 2000자"></textarea>
+                    <textarea type="text" cols="80" th:name="${'comment'+i.index}" placeholder="최대 2000자" th:text="${view.comment}"></textarea>
                 </div>
                 <div>
                     <div id="another_week_result"></div>
@@ -98,7 +98,7 @@
                         <label>Expected Achievement</label>
                         <input type="number" placeholder="1~100" min="1" max="100" th:name="${'achievement'+i.index}" th:value="${view.expectedAchievement}"/><br/>
                         <label>Comment</label><br/>
-                        <textarea type="text" cols="80" th:name="${'comment'+i.index}" placeholder="최대 2000자"></textarea>
+                        <textarea type="text" cols="80" th:name="${'comment'+i.index}" placeholder="최대 2000자" th:text="${view.comment}"></textarea>
                     </div>
                     <div id="another_week_plan"></div>
                     <input type="button" value="Add" onclick="next_week_add()"/>

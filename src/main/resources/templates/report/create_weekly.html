@@ -96,7 +96,7 @@
                 <div th:unless="${Valid} == true">
                     <div th:each="done, i:${task}" th:unless="${done.progress} == null">
                         <label>Project Name(한 일의 주제)</label>
-                        <input type="text" th:name="${'done'+i.index}" th:value="${done.progress}" readonly/>
+                        <input type="text" th:name="${'done'+i.index}" th:value="${done.progress}"/>
                         <label>Achievement</label>
                         <input type="number" placeholder="1~100" max="100" min="1" th:name="${'achievement'+i.index}" th:value="${done.expectedAchievement}"/><br/>
                         <label>Description(한 일의 내용)</label><br/>

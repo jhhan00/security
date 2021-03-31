@@ -1,6 +1,5 @@
 package com.example.security.Controller;
 
-import com.example.security.Dao.ReportDao;
 import com.example.security.Entity.*;
 import com.example.security.service.ReportService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,12 +18,6 @@ import java.util.*;
 @Controller
 @RequestMapping("/report")
 public class ReportController {
-    @Autowired
-    ReportRepository reportRepository;
-
-    @Autowired
-    ReportDao rd;
-
     @Autowired
     TaskRepository taskRepository;
 
@@ -70,27 +63,6 @@ public class ReportController {
 
         return "report/report_list";
     }
-
-//    @GetMapping("/sorting") // report 정렬해서 원하는 것 보기
-//    public String reportSorting(Authentication auth, Model model, @RequestParam("Big")String big,
-//                                @RequestParam("Small")String small) {
-//        int loginOrNot = LoginOrNot(auth);
-//        if(loginOrNot == -1) return "redirect:/";
-//
-//        User user = reportService.authReturn(auth.getName());
-//
-//        System.out.println(big + " , " + small);
-//        List<Report> rlist = new ArrayList<>();
-//        if(big.equals("type")) {
-//            rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(small);
-//        } else if(big.equals("state")) {
-//            rlist = reportRepository.findByStateOrderByWriteDateDesc(small);
-//        }
-//        model.addAttribute("list",rlist);
-//        model.addAttribute("user", user);
-//
-//        return "report/report_list";
-//    }
 
     @GetMapping("/requested_only")
     public String OnlyRequestedReport(Authentication auth, Model model) {
@@ -148,14 +120,12 @@ public class ReportController {
         long r_id = Long.parseLong(id);
         if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
 
-//        User user = reportService.authReturn(auth.getName());
-        List<Task> tlist = taskRepository.findByReportId(r_id);
-        model.addAttribute("list",tlist);
+        User user = reportService.authReturn(auth.getName());
+        List<Task> taskList = reportService.getTaskList(r_id);
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
         model.addAttribute("reportID", id);
-//        model.addAttribute("user", user);
+        model.addAttribute("list", taskList);
+        model.addAttribute("user", user);
 
         return "report/modify_daily";
     }
@@ -202,15 +172,15 @@ public class ReportController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
-
         long r_id = Long.parseLong(id);
         if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
 
-        List<Task> tlist = taskRepository.findByReportId(r_id);
-        model.addAttribute("list",tlist);
-        model.addAttribute("reportID",id);
+        User user = reportService.authReturn(auth.getName());
+        List<Task> taskList = reportService.getTaskList(r_id);
+
+        model.addAttribute("list", taskList);
+        model.addAttribute("reportID", id);
+        model.addAttribute("user", user);
 
         return "report/modify_yearly";
     }
@@ -273,15 +243,15 @@ public class ReportController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
-
         long r_id = Long.parseLong(id);
         if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
 
-        List<Task> tlist = taskRepository.findByReportId(r_id);
-        model.addAttribute("list",tlist);
-        model.addAttribute("reportID",id);
+        User user = reportService.authReturn(auth.getName());
+        List<Task> taskList = taskRepository.findByReportId(r_id);
+
+        model.addAttribute("list", taskList);
+        model.addAttribute("reportID", id);
+        model.addAttribute("user", user);
 
         return "report/modify_monthly";
     }
@@ -377,15 +347,15 @@ public class ReportController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
-
         long r_id = Long.parseLong(id);
         if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
 
-        List<Task> tlist = taskRepository.findByReportId(r_id);
-        model.addAttribute("list",tlist);
-        model.addAttribute("reportID",id);
+        User user = reportService.authReturn(auth.getName());
+        List<Task> taskList = taskRepository.findByReportId(r_id);
+
+        model.addAttribute("list", taskList);
+        model.addAttribute("reportID", id);
+        model.addAttribute("user", user);
 
         return "report/modify_weekly";
     }

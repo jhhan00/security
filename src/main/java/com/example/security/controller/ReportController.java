@@ -1,6 +1,6 @@
-package com.example.security.Controller;
+package com.example.security.controller;
 
-import com.example.security.Entity.*;
+import com.example.security.entity.*;
 import com.example.security.service.ReportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,9 +1,9 @@
-package com.example.security.Controller;
+package com.example.security.controller;
 
 import com.example.security.Dao.SimpleUserDao;
-import com.example.security.Entity.Report;
-import com.example.security.Entity.ReportRepository;
-import com.example.security.Extra.GenerateCertNumber;
+import com.example.security.entity.Report;
+import com.example.security.entity.ReportRepository;
+import com.example.security.extra.GenerateCertNumber;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -83,8 +83,12 @@ public class EmailSendController {
     }
 
     @PostMapping("/request_check")
-    public String CheckNumber(@RequestParam("check_number") String check, @RequestParam("UserId") String id,
-                              @RequestParam("sendNumber")String send, Model model) {
+    public String CheckNumber(
+            @RequestParam("check_number") String check,
+            @RequestParam("UserId") String id,
+            @RequestParam("sendNumber")String send,
+            Model model
+    ) {
         send = send.trim();
         check = check.trim();
         System.out.println("sendNumber : "+send);

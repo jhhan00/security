@@ -1,4 +1,4 @@
-package com.example.security.Controller;
+package com.example.security.controller;
 
 import com.example.security.Dao.SimpleUserDao;
 import org.springframework.beans.factory.annotation.Autowired;

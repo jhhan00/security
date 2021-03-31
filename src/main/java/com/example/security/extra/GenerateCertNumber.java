@@ -1,4 +1,4 @@
-package com.example.security.Extra;
+package com.example.security.extra;
 
 import java.util.Random;
 

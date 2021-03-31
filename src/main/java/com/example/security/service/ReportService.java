@@ -1,6 +1,6 @@
 package com.example.security.service;
 
-import com.example.security.Entity.*;
+import com.example.security.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

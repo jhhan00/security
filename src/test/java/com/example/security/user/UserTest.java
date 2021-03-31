@@ -1,7 +1,7 @@
 package com.example.security.user;
 
-import com.example.security.Entity.User;
-import com.example.security.Entity.UserRepository;
+import com.example.security.entity.User;
+import com.example.security.entity.UserRepository;
 import com.example.security.service.ReportService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

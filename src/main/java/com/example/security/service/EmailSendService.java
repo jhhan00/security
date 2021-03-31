@@ -82,7 +82,7 @@ public class EmailSendService {
         log.info("sendNumber : " + send);
         log.info("check      : " + check);
 
-        String msg = "";
+        String msg;
         if(check.equals(send)) {
             User user = userRepository.findByUsername(email);
             user.setEnabled(1);

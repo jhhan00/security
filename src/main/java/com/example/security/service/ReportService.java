@@ -1,11 +1,16 @@
 package com.example.security.service;
 
 import com.example.security.Entity.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@Slf4j
 @Service
 public class ReportService {
     @Autowired
@@ -16,6 +21,11 @@ public class ReportService {
 
     @Autowired
     UserRepository userRepository;
+
+    private String getLocalDateFormat(LocalDateTime ldt) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+        return ldt.format(dtf);
+    }
 
     public User authReturn(String username) {
         User user = userRepository.findByUsername(username);
@@ -94,6 +104,10 @@ public class ReportService {
         return reportRepository.findByStateOrderByUpdatedTimeDesc("Requested");
     }
 
+    public List<Report> getReportByTypeAndUsername(String type, String username) {
+        return reportRepository.findByReportTypeAndUsername(type, username);
+    }
+
     public List<Task> getTaskList(long reportId) {
         return taskRepository.findByReportId(reportId);
     }
@@ -118,5 +132,261 @@ public class ReportService {
         if(report.getState().equals("Requested") || report.getState().equals("Approved"))
             return -1;
         return 1;
+    }
+
+    public List<Task> getTaskByIdAndReportKind(long id, String kind) {
+        return taskRepository.findByReportIdAndReportKind(id, kind);
+    }
+
+    public void createDailyReport(HttpServletRequest request, String username) {
+        Enumeration<String> keys = request.getParameterNames();
+        LocalDateTime now = LocalDateTime.now();
+        String nowDate = getLocalDateFormat(now);
+
+        //Report Save
+        Report report = new Report();
+        report.setUsername(username);
+        report.setReportType("Daily");
+        report.setSimpleDate(nowDate);
+        report.setWriteDate(now);
+        report.setUpdatedTime(now);
+        report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Daily_Report");
+        reportRepository.save(report);
+
+        System.out.println(report);
+        long r_id = report.getReportId();
+
+        //Task Save
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+//            log.info(key + ": " + request.getParameter(key));
+            Task task = new Task();
+            task.setReportId(r_id);
+            task.setUsername(username);
+            task.setSimpleDate(nowDate);
+            task.setReportType("Daily");
+            task.setReportKind("Done");
+            //
+            String done = request.getParameter(key);
+            if(request.getParameter(key).length() >= 2000) {
+                done = done.substring(0,2000);
+            }
+            task.setDone(done);
+            //
+            log.info("task=" + task);
+            taskRepository.save(task);
+        }
+    }
+
+    public void createWeeklyReport(HttpServletRequest request, String username) {
+        Enumeration<String> keys = request.getParameterNames();
+        LocalDateTime now = LocalDateTime.now();
+        String nowDate = getLocalDateFormat(now);
+
+        //Report Save
+        Report report = new Report();
+        report.setUsername(username);
+        report.setReportType("Weekly");
+        report.setSimpleDate(nowDate);
+        report.setWriteDate(now);
+        report.setUpdatedTime(now);
+        report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Weekly_Report");
+        reportRepository.save(report);
+
+        System.out.println(report);
+        long r_id = report.getReportId();
+
+        while(keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            int loc1 = key.indexOf("done");
+            int loc2 = key.indexOf("plan");
+//            log.info(key + " : " + request.getParameter(key) + " -- loc1 : " + loc1 + ", loc2 : " + loc2);
+            Task task = new Task();
+            task.setReportId(r_id);
+            task.setUsername(username);
+            task.setSimpleDate(nowDate);
+            task.setReportType("Weekly");
+            if(loc1 == 0) {
+                task.setReportKind("weekly_result");
+                task.setDone(request.getParameter(key));
+                key = keys.nextElement();
+                task.setRealAchievement(request.getParameter(key));
+            } else if(loc2 == 0) {
+                task.setReportKind("weekly_plan");
+                task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                task.setExpectedAchievement(request.getParameter(key));
+            }
+            key = keys.nextElement();
+            //
+            String comment = request.getParameter(key);
+            if(comment.length() >= 2000)
+                comment =  comment.substring(0,1999);
+            task.setComment(comment);
+            //
+            log.info("task=" + task);
+            taskRepository.save(task);
+        }
+    }
+
+    public void createMonthlyReport(HttpServletRequest request, String username) {
+        Enumeration<String> keys = request.getParameterNames();
+        LocalDateTime now = LocalDateTime.now();
+        String nowDate = getLocalDateFormat(now);
+
+        //Report Save
+        Report report = new Report();
+        report.setUsername(username);
+        report.setReportType("Monthly");
+        report.setSimpleDate(nowDate);
+        report.setWriteDate(now);
+        report.setUpdatedTime(now);
+        report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Monthly_Report");
+        reportRepository.save(report);
+
+        System.out.println(report);
+        long r_id = report.getReportId();
+
+        while(keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            int loc1 = key.indexOf("done");
+            int loc2 = key.indexOf("plan");
+//            log.info(key + " : " + request.getParameter(key) + " -- loc1 : " + loc1 + ", loc2 : " + loc2);
+            Task task = new Task();
+            task.setReportId(r_id);
+            task.setUsername(username);
+            task.setSimpleDate(nowDate);
+            task.setReportType("Monthly");
+            if(loc1 == 0) {
+                task.setReportKind("Done");
+                task.setDone(request.getParameter(key));
+                key = keys.nextElement();
+                task.setRealAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                task.setProjectStartDate(request.getParameter(key));
+                key = keys.nextElement();
+                task.setProjectTargetDate(request.getParameter(key));
+                key = keys.nextElement();
+                task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                //
+                String comment = request.getParameter(key);
+                if(comment.length() >= 2000) comment = comment.substring(0,1999);
+                //
+                task.setComment(comment);
+                key = keys.nextElement();
+                task.setQuarter1(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter2(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter3(request.getParameter(key));
+                key = keys.nextElement();
+                task.setQuarter4(request.getParameter(key));
+            } else if(loc2 == 0) {
+                task.setReportKind("Next_Month_plan");
+                task.setProgress(request.getParameter(key));
+                key = keys.nextElement();
+                task.setExpectedAchievement(request.getParameter(key));
+                key = keys.nextElement();
+                //
+                String comment = request.getParameter(key);
+                if(comment.length() >= 2000) comment = comment.substring(0,1999);
+                //
+                task.setComment(comment);
+            }
+            log.info("task=" + task);
+            taskRepository.save(task);
+        }
+    }
+
+    public void createYearlyReport(HttpServletRequest request, String username) {
+        Enumeration<String> keys = request.getParameterNames();
+        LocalDateTime now = LocalDateTime.now();
+        String nowDate = getLocalDateFormat(now);
+
+        //Report Save
+        Report report = new Report();
+        report.setUsername(username);
+        report.setReportType("Yearly");
+        report.setSimpleDate(nowDate);
+        report.setWriteDate(now);
+        report.setUpdatedTime(now);
+        report.setState("Waiting");
+        report.setReportTitle(nowDate + "_Yearly_Report");
+        reportRepository.save(report);
+
+        System.out.println(report);
+        long r_id = report.getReportId();
+
+        while(keys.hasMoreElements()) {
+            String key = keys.nextElement();
+//            log.info(key + " : " + request.getParameter(key));
+            Task task = new Task();
+            task.setReportId(r_id);
+            task.setUsername(username);
+            task.setSimpleDate(nowDate);
+            task.setReportType("Yearly");
+            task.setReportKind("project_goal");
+            task.setProgress(request.getParameter(key));
+            key = keys.nextElement();
+            //
+            String comment = request.getParameter(key);
+            if(comment.length() >= 2000)
+                comment =  comment.substring(0,1999);
+            task.setComment(comment);
+            //
+            key = keys.nextElement();
+            task.setProjectStartDate(request.getParameter(key));
+            key = keys.nextElement();
+            task.setProjectTargetDate(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter1(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter2(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter3(request.getParameter(key));
+            key = keys.nextElement();
+            task.setQuarter4(request.getParameter(key));
+
+            log.info("task=" + task);
+            taskRepository.save(task);
+        }
+    }
+
+    public void createNotice(HttpServletRequest request, String username) {
+        Enumeration<String> keys = request.getParameterNames();
+        LocalDateTime now = LocalDateTime.now();
+        String nowDate = getLocalDateFormat(now);
+
+        //Report Save
+        Report report = new Report();
+        report.setUsername(username);
+        report.setReportType("Notice");
+        report.setSimpleDate(nowDate);
+        report.setWriteDate(now);
+        report.setUpdatedTime(now);
+        report.setState("Approved");
+        report.setReportTitle(nowDate + "_Notice");
+        reportRepository.save(report);
+
+        System.out.println(report);
+        long r_id = report.getReportId();
+
+        while(keys.hasMoreElements()) {
+            String key = keys.nextElement();
+//            log.info(key + " : " + request.getParameter(key));
+            Task task = new Task();
+            task.setReportId(r_id);
+            task.setUsername(username);
+            task.setSimpleDate(nowDate);
+            task.setReportType("Notice");
+            task.setReportKind("notice");
+            task.setProgress(request.getParameter(key));
+            log.info("task=" + task);
+            taskRepository.save(task);
+        }
     }
 }

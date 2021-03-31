@@ -1,10 +1,8 @@
 package com.example.security.Controller;
 
 import com.example.security.Dao.ReportDao;
-import com.example.security.Entity.Report;
-import com.example.security.Entity.ReportRepository;
-import com.example.security.Entity.Task;
-import com.example.security.Entity.TaskRepository;
+import com.example.security.Entity.*;
+import com.example.security.service.ReportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -15,10 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -33,30 +28,27 @@ public class ReportController {
     @Autowired
     TaskRepository taskRepository;
 
-    public int LoginOrNot(Authentication authentication) {
+    @Autowired
+    ReportService reportService;
+
+    private int LoginOrNot(Authentication authentication) {
         // log.info("auth : " + authentication);
         if(authentication == null)  return -1;
         else return 1;
     }
 
-    @GetMapping // report - 본인 것만 보기 , 단 관리자는 전체 인원 보기
+    // report - 본인 것만 보기 , 단 관리자는 전체 인원 보기
+    @GetMapping
     public String reportList(Model model, Authentication auth) {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        List<Report> list;
-        //System.out.println(auth.getName() + " in report list");
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        String role = authority.get("role");
-        if(role.equals("USER")) {
-            list = reportRepository.findByUsernameOrderByUpdatedTimeDesc(auth.getName());
-            List<Report> noticeList = reportRepository.findByReportTypeOrderByWriteDateDesc("Notice");
-            list.addAll(noticeList);
-        } else {
-            list = reportRepository.findAllByOrderByUpdatedTimeDesc();
-        }
-        model.addAttribute("list",list);
-        model.addAttribute("authority", authority);
+        // System.out.println(auth.getName() + " in report list");
+        User user = reportService.authReturn(auth.getName());
+        List<Report> reportList = reportService.getReportList(user.getRole(), auth.getName());
+
+        model.addAttribute("list", reportList);
+        model.addAttribute("user", user);
 
         return "report/report_list";
     }
@@ -66,82 +58,50 @@ public class ReportController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
+        User user = reportService.authReturn(auth.getName());
 
         String type = request.getParameter("search1");
-        String finding = request.getParameter("searching2");
-        log.info(type + " " + finding);
-        List<Report> rlist = new ArrayList<>();
+        String find = request.getParameter("searching2");
+        log.info(type + " " + find);
+        List<Report> reportList = reportService.searchReportList(user.getRole(), auth.getName(), type, find);
 
-        if(authority.get("role").equals("USER")) { // User인 경우
-            switch (type) {
-                case "username":
-                    rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(finding);
-                    break;
-                case "reportTitle":
-                    rlist = reportRepository.findByUsernameAndReportTitleContainingOrderByWriteDate(auth.getName(), finding);
-                    break;
-                case "time":
-                    List<Report> rl = reportRepository.findByUsernameOrderByUpdatedTimeDesc(auth.getName());
-                    for(Report r : rl) {
-                        if(finding.equals(r.getWriteDate().toLocalDate().toString()))
-                            rlist.add(r);
-                    }
-                    break;
-                case "type":
-                    rlist = reportRepository.findByUsernameAndReportTypeOrderByWriteDateDesc(auth.getName(), finding);
-                    break;
-                case "state":
-                    rlist = reportRepository.findByUsernameAndStateOrderByWriteDateDesc(auth.getName(), finding);
-                    break;
-            }
-        } else { // Admin인 경우
-            switch (type) {
-                case "username":
-                    rlist = reportRepository.findByUsernameStartsWithOrderByWriteDateDesc(finding);
-                    break;
-                case "reportTitle":
-                    rlist = reportRepository.findByReportTitleContainingOrderByWriteDateDesc(finding);
-                    break;
-                case "time":
-                    List<Report> rl = reportRepository.findAllByOrderByUpdatedTimeDesc();
-                    for (Report rp : rl) {
-                        if (finding.equals(rp.getWriteDate().toLocalDate().toString())) {
-                            rlist.add(rp);
-                        }
-                    }
-                    break;
-                case "type":
-                    rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(finding);
-                    break;
-                case "state":
-                    rlist = reportRepository.findByStateOrderByWriteDateDesc(finding);
-                    break;
-            }
-        }
+        model.addAttribute("list", reportList);
+        model.addAttribute("user", user);
 
-        model.addAttribute("list",rlist);
         return "report/report_list";
     }
 
-    @GetMapping("/sorting") // report 정렬해서 원하는 것 보기
-    public String reportSorting(Authentication auth, Model model, @RequestParam("Big")String big,
-                                @RequestParam("Small")String small) {
+//    @GetMapping("/sorting") // report 정렬해서 원하는 것 보기
+//    public String reportSorting(Authentication auth, Model model, @RequestParam("Big")String big,
+//                                @RequestParam("Small")String small) {
+//        int loginOrNot = LoginOrNot(auth);
+//        if(loginOrNot == -1) return "redirect:/";
+//
+//        User user = reportService.authReturn(auth.getName());
+//
+//        System.out.println(big + " , " + small);
+//        List<Report> rlist = new ArrayList<>();
+//        if(big.equals("type")) {
+//            rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(small);
+//        } else if(big.equals("state")) {
+//            rlist = reportRepository.findByStateOrderByWriteDateDesc(small);
+//        }
+//        model.addAttribute("list",rlist);
+//        model.addAttribute("user", user);
+//
+//        return "report/report_list";
+//    }
+
+    @GetMapping("/requested_only")
+    public String OnlyRequestedReport(Authentication auth, Model model) {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
+        User user = reportService.authReturn(auth.getName());
+        List<Report> reportList = reportService.getRequestedReportList();
 
-        System.out.println(big + " , " + small);
-        List<Report> rlist = new ArrayList<>();
-        if(big.equals("type")) {
-            rlist = reportRepository.findByReportTypeOrderByWriteDateDesc(small);
-        } else if(big.equals("state")) {
-            rlist = reportRepository.findByStateOrderByWriteDateDesc(small);
-        }
-        model.addAttribute("list",rlist);
+        model.addAttribute("list", reportList);
+        model.addAttribute("user", user);
 
         return "report/report_list";
     }
@@ -163,20 +123,6 @@ public class ReportController {
         model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/report_detail";
-    }
-
-    @GetMapping("/requested_only")
-    public String OnlyRequestedReport(Authentication auth, Model model) {
-        int loginOrNot = LoginOrNot(auth);
-        if(loginOrNot == -1) return "redirect:/";
-
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
-
-        List<Report> rlist = reportRepository.findByStateOrderByUpdatedTimeDesc("Requested");
-        model.addAttribute("list", rlist);
-
-        return "report/report_list";
     }
 
     @GetMapping("/request_state")

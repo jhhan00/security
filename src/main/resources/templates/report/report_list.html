@@ -27,10 +27,10 @@
         });
 
         function chooseSelected(s) {
-            var target = document.getElementById('searching2');
+            let target = document.getElementById('searching2');
             document.getElementById('result2').removeChild(target);
 
-            var selected = "";
+            let selected = "";
             if(s.value === "username") selected = "Username";
             else if(s.value === "reportTitle") selected = "Report Title";
             else if(s.value === "time") selected = "ex) 2020-01-01";
@@ -38,31 +38,31 @@
             else if(s.value === "state") selected = "state";
 
             target = document.getElementById("result2");
-            var onetwo = "";
+            let oneTwo;
             if(selected === "Type" || selected === "state") {
-                onetwo = document.createElement("select");
+                oneTwo = document.createElement("select");
             }
             else {
-                onetwo = document.createElement("input");
-                onetwo.placeholder = selected;
-                onetwo.type="text";
+                oneTwo = document.createElement("input");
+                oneTwo.placeholder = selected;
+                oneTwo.type="text";
             }
-            onetwo.name = "searching2";
-            onetwo.id = "searching2";
-            target.appendChild(onetwo);
+            oneTwo.name = "searching2";
+            oneTwo.id = "searching2";
+            target.appendChild(oneTwo);
 
             if(selected === "Type" || selected === "state") {
-                var category1 = ["Notice", "Daily", "Weekly", "Monthly", "Yearly"];
-                var category2 = ["Waiting", "Requested", "Approved", "Rejected"];
+                const category1 = ["Notice", "Daily", "Weekly", "Monthly", "Yearly"];
+                const category2 = ["Waiting", "Requested", "Approved", "Rejected"];
                 target = document.getElementById("searching2");
 
-                var category = "";
+                let category;
                 if(selected === "Type") category = category1;
                 else category = category2;
                 target.options.length = 0;
 
-                for(x in category) {
-                    var opt = document.createElement("option");
+                for(const x in category) {
+                    const opt = document.createElement("option");
                     opt.value = category[x];
                     opt.innerHTML = category[x];
                     target.appendChild(opt);
@@ -88,8 +88,8 @@
     </nav>
     <div class="container" style="padding: 10px">
         <div class="t-c">
-            <h4><span th:text="${authority.realName}"></span> 님, Welcome!</h4>
-<!--            <span th:text="${authority.role}"></span>-->
+            <h4><span th:text="${user.getRealName()}"></span> 님, Welcome!</h4>
+<!--            <span th:text="${user.getUsername()}"></span>-->
         </div>
         <br/>
         <div>
@@ -110,33 +110,21 @@
                 <button class="btn btn-success btn-sm">Search</button>
             </form>
         </div>
-        <div class="t-l" th:if="${authority.role} == 'ADMIN'">
+        <div class="t-l" th:if="${user.getRole()} == 'ADMIN'">
             <a class="btn btn-primary" href="/report/requested_only">Requested Report</a>
         </div>
         <div class="t-r">
-            <div th:if="${authority.role} == 'ADMIN'">
+            <div th:if="${user.getRole()} == 'ADMIN'">
                 <a class="btn btn-primary" href="/report/create/notice">New<br/>Notice</a>
             </div>
-            <div th:unless="${authority.role} == 'ADMIN'">
+            <div th:if="${user.getRole()} == 'USER'">
                 <a class="btn btn-primary" href="/report/create/daily">New<br/>Daily</a>
                 <a class="btn btn-primary" href="/report/create/weekly">New<br/>Weekly</a>
                 <a class="btn btn-primary" href="/report/create/monthly">New<br/>Monthly</a>
                 <a class="btn btn-primary" href="/report/create/project_goal">New<br/>Project Goal</a>
             </div>
-        </div><br/>
-<!--        <div class="t-l">-->
-<!--            <form method="get" action="/report/sorting">-->
-<!--                <select name="Big" onchange="categoryChange(this)">-->
-<!--                    <option selected>Select1</option>-->
-<!--                    <option value="type">Type</option>-->
-<!--                    <option value="state">State</option>-->
-<!--                </select>-->
-<!--                <select name="Small" id="select2">-->
-<!--                    <option selected>Select2</option>-->
-<!--                </select>-->
-<!--                <input type="submit" value="sort"/>-->
-<!--            </form>-->
-<!--        </div>-->
+        </div>
+        <br/>
         <table id="table" class="table table-hover t-c">
             <thead>
                 <tr>
@@ -150,7 +138,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="report:${list}">
+                <tr th:each="report : ${list}">
                     <td th:text="${report.reportId}"></td>
                     <td th:if="${report.reportType} == 'Notice'" th:text="${report.reportType}" class="text-blue"></td>
                     <td th:unless="${report.reportType} == 'Notice'" th:text="${report.reportType}"></td>

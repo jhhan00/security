@@ -7,9 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import javax.mail.MessagingException;
 import java.util.Map;
 
 @Controller
@@ -93,12 +91,12 @@ public class TestController {
     }
 
     @GetMapping("/signUp")
-    public String SignUpForm(Model model) {
+    public String SignUpForm() {
         return "signUp/sign_up";
     }
 
     @PostMapping("/signUp")
-    public String SignUpFunction(Model model, @RequestParam Map<String, String> params) throws MessagingException {
+    public String SignUpFunction(Model model, @RequestParam Map<String, String> params) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         System.out.println(params); // 값들이 잘 넘어오는지 확인
 

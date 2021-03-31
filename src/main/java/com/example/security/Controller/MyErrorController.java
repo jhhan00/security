@@ -26,7 +26,7 @@ public class MyErrorController implements ErrorController {
     @RequestMapping("/error")
     public String ErrorHandle(HttpServletRequest request, Model model) {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
-        HttpStatus httpStatus = HttpStatus.valueOf(Integer.valueOf(status.toString()));
+        HttpStatus httpStatus = HttpStatus.valueOf(Integer.parseInt(status.toString()));
         log.info("httpStatus : " + httpStatus.toString());
         model.addAttribute("code",status.toString());
         model.addAttribute("msg",httpStatus.getReasonPhrase());

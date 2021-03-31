@@ -4,6 +4,7 @@ import com.example.security.Dao.SimpleUserDao;
 import com.example.security.entity.Report;
 import com.example.security.entity.ReportRepository;
 import com.example.security.extra.GenerateCertNumber;
+import com.example.security.service.EmailSendService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -24,60 +25,23 @@ import java.util.Enumeration;
 @Slf4j
 @Controller
 public class EmailSendController {
-    @Autowired
-    SimpleUserDao sud;
 
     @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private ReportRepository reportRepository;
+    EmailSendService emailSendService;
 
     @PostMapping("/change_state")
     public String requestEmailAndChangeState(HttpServletRequest request) throws MessagingException {
-        Enumeration<String> line = request.getParameterNames();
-        long id = -1;
-
-        while(line.hasMoreElements()){
-            String tmp = line.nextElement();
-            log.info(tmp + " _ " + request.getParameter(tmp));
-            if(tmp.equals("report_id"))
-                id = Long.parseLong(request.getParameter(tmp));
-            else {
-                String word = "";
-                if(tmp.equals("Approve")) word = "Approved";
-                else if(tmp.equals("Reject")) word = "Rejected";
-
-                Report report = reportRepository.findByReportId(id);
-                MimeMessage message = mailSender.createMimeMessage();
-                message.setSubject(report.getReportTitle() + " Result : " + word);
-                message.setRecipient(Message.RecipientType.TO, new InternetAddress(report.getUsername()));
-                message.setText("Your " + report.getReportTitle() + " is " + word + ".\nCheck Your Report.");
-                message.setSentDate(new Date());
-                mailSender.send(message);
-                report.setState(word);
-                reportRepository.save(report);
-            }
-        }
+        long id = emailSendService.sendEmailAndChangeState(request);
         return "redirect:/report/detail/" + id;
     }
 
     @GetMapping("/request")
-    public String SendEmail(@RequestParam("UserId") String id, Model model) throws MessagingException {
-        System.out.println(id);
-        GenerateCertNumber ge = new GenerateCertNumber();
-        String temp = ge.executeGenerate();
-        System.out.println(temp);
+    public String SendEmail(@RequestParam("UserId") String email, Model model) throws MessagingException {
+        log.info("email = " + email);
+        String result = emailSendService.sendEmailToNewbie(email);
 
-        MimeMessage message = mailSender.createMimeMessage();
-        message.setSubject("회원가입 인증");
-        message.setRecipient(Message.RecipientType.TO, new InternetAddress(id));
-        message.setText("인증번호는 " + temp + " 입니다.");
-        message.setSentDate(new Date());
-        mailSender.send(message);
-
-        model.addAttribute("UserId",id);
-        model.addAttribute("sendNumber", temp);
+        model.addAttribute("UserId", email);
+        model.addAttribute("sendNumber", result);
 
         return "signUp/cert";
     }
@@ -85,42 +49,17 @@ public class EmailSendController {
     @PostMapping("/request_check")
     public String CheckNumber(
             @RequestParam("check_number") String check,
-            @RequestParam("UserId") String id,
+            @RequestParam("UserId") String email,
             @RequestParam("sendNumber")String send,
             Model model
     ) {
-        send = send.trim();
-        check = check.trim();
-        System.out.println("sendNumber : "+send);
-        System.out.println("check      : "+check);
-        System.out.println(id);
-        String msg = "";
+        String message = emailSendService.checkNumberAndReturnString(email, send, check);
         boolean success = true;
-        if(check.equals(send)) {
-            System.out.println("Equal Numbers");
+        if(message.equals("wrong")) success = false;
 
-            //submit to Database
-            try {
-                int rst = sud.UpdateEnabled(id);
-                if(rst < 1) {
-                    msg += "Error in Database..";
-                    success = false;
-                } else {
-                    msg += "Complete!";
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                msg = "Somthing Wrong... Ask to Administrator";
-                success = false;
-            }
-        } else {
-            System.out.println("Error");
-            msg += "Try Again...";
-            success = false;
-        }
-        model.addAttribute("msg",msg);
-        model.addAttribute("isSuccess",success);
-        model.addAttribute("UserId",id);
+        model.addAttribute("msg", message);
+        model.addAttribute("isSuccess", success);
+        model.addAttribute("UserId", email);
 
         return "signUp/cert_result";
     }

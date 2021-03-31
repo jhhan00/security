@@ -11,19 +11,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @Controller
-public class TestController {
+public class StartController {
     @Autowired
     SimpleUserDao sud;
 
     @RequestMapping("/")
     public String home() {
         return "Log_Related/login-form";
-    }
-
-    @ResponseBody
-    @RequestMapping("/adminOnly")
-    public String adminOnly() {
-        return "SecretPage";
     }
 
     @RequestMapping("/login")

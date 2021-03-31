@@ -20,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/adminOnly").hasAuthority("ROLE_ADMIN")
+//                .antMatchers("/adminOnly").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/**").permitAll() // 넓은 범위의 URL을 아래로 배치
                 .anyRequest().authenticated()
                 .and()

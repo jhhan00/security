@@ -86,7 +86,37 @@ public class ReportService {
         return reportList;
     }
 
+    public Report getReportFromId(long reportId) {
+        return reportRepository.findByReportId(reportId);
+    }
+
     public List<Report> getRequestedReportList() {
         return reportRepository.findByStateOrderByUpdatedTimeDesc("Requested");
+    }
+
+    public List<Task> getTaskList(long reportId) {
+        return taskRepository.findByReportId(reportId);
+    }
+
+    public void setReportToRequest(long id) {
+        Report report = reportRepository.findByReportId(id);
+        report.setState("Requested");
+        reportRepository.save(report);
+    }
+
+    public void deleteReportAndTask(long id) {
+        List<Task> taskList = taskRepository.findByReportId(id);
+        for(Task t : taskList) {
+            taskRepository.delete(t);
+        }
+        Report report = reportRepository.findByReportId(id);
+        reportRepository.delete(report);
+    }
+
+    public int checkRequested(long id) {
+        Report report = reportRepository.findByReportId(id);
+        if(report.getState().equals("Requested") || report.getState().equals("Approved"))
+            return -1;
+        return 1;
     }
 }

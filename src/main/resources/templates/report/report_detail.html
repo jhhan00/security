@@ -29,9 +29,9 @@
     </nav>
     <div class="container">
         <div class="t-c">
-            <h4><span th:text="${authority.username}">username</span>, Welcome!</h4>
-<!--            <span th:text="${authority.realName}">realname</span>-->
-<!--            <span th:text="${authority.role}">role</span>-->
+            <h4><span th:text="${user.realName}">username</span> 님, Welcome!</h4>
+<!--            <span th:text="${user.username}">realName</span>-->
+<!--            <span th:text="${user.role}">role</span>-->
         </div>
         <hr/>
         Report Id : <span th:text="${info.reportId}"></span>
@@ -195,7 +195,7 @@
             </div>
         </div>
         <hr/>
-        <div th:if="${authority.username} == ${info.username} and (${info.state} == 'Waiting' or ${info.state} == 'Rejected')" class="row p-l-15">
+        <div th:if="${user.username} == ${info.username} and (${info.state} == 'Waiting' or ${info.state} == 'Rejected')" class="row p-l-15">
             <form th:if="${info.reportType}=='Daily'" method="get" action="/report/modify_daily">
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-primary" value="Modify"/>
@@ -221,7 +221,7 @@
                 <input type="submit" class="btn btn-info" value="Request"/>
             </form>
         </div>
-        <div th:if="${authority.role} == 'ADMIN' and ${info.state} == 'Requested'">
+        <div th:if="${user.role} == 'ADMIN' and ${info.state} == 'Requested'">
             <form method="post" action="/change_state">
                 <input type="hidden" th:value="${info.reportId}" name="report_id"/>
                 <input type="submit" class="btn btn-success" name="Approve" value="Approve">

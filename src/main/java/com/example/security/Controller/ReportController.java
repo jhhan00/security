@@ -107,51 +107,37 @@ public class ReportController {
     }
 
     @GetMapping("/detail/{reportId}") // report 상세보기
-    public String reportView(@PathVariable("reportId") long reportid, Model model, Authentication auth,
-                             HttpServletRequest request) {
+    public String reportView(
+            @PathVariable("reportId") long reportId,
+            Model model,
+            Authentication auth
+    ) {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority",authority);
+        User user = reportService.authReturn(auth.getName());
+        List<Task> taskList = reportService.getTaskList(reportId);
+        Report report = reportService.getReportFromId(reportId);
 
-        List<Task> list = this.taskRepository.findByReportId(reportid);
-        model.addAttribute("list",list);
-
-        Report rp = this.reportRepository.findByReportId(reportid);
-        model.addAttribute("info",rp);
-        model.addAttribute("oldUrl", request.getHeader("referer"));
+        model.addAttribute("list", taskList);
+        model.addAttribute("info", report);
+        model.addAttribute("user", user);
 
         return "report/report_detail";
     }
 
     @GetMapping("/request_state")
     public String reviewReport(@RequestParam("rId")String id) {
-        Report rp = reportRepository.findByReportId(Long.parseLong(id));
-        rp.setState("Requested");
-        reportRepository.save(rp);
+        reportService.setReportToRequest(Long.parseLong(id));
 
         return "redirect:/report/detail/" + id;
     }
 
     @PostMapping("/delete")
     public String deleteReport(@RequestParam("reportID")String id) {
-        long r_id = Long.parseLong(id);
-        List<Task> tlist = taskRepository.findByReportId(r_id);
-        for(Task t : tlist) {
-            taskRepository.delete(t);
-        }
-        Report r = reportRepository.findByReportId(r_id);
-        reportRepository.delete(r);
+        reportService.deleteReportAndTask(Long.parseLong(id));
 
         return "redirect:/report";
-    }
-
-    public int RequestedOrNot(long id) {
-        Report r = reportRepository.findByReportId(id);
-        if(r.getState().equals("Requested") || r.getState().equals("Approved"))
-            return -1;
-        return 1;
     }
 
     @GetMapping("/modify_daily")
@@ -160,14 +146,16 @@ public class ReportController {
         if(loginOrNot == -1) return "redirect:/";
 
         long r_id = Long.parseLong(id);
-        if(RequestedOrNot(r_id) == -1) return "redirect:/report/detail/" + r_id;
+        if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
 
+//        User user = reportService.authReturn(auth.getName());
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
 
         Map<String, String> authority = rd.getUserInfo(auth.getName());
         model.addAttribute("authority", authority);
-        model.addAttribute("reportID",id);
+        model.addAttribute("reportID", id);
+//        model.addAttribute("user", user);
 
         return "report/modify_daily";
     }
@@ -218,7 +206,7 @@ public class ReportController {
         model.addAttribute("authority", authority);
 
         long r_id = Long.parseLong(id);
-        if(RequestedOrNot(r_id) == -1) return "redirect:/report/detail/" + r_id;
+        if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
 
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
@@ -289,7 +277,7 @@ public class ReportController {
         model.addAttribute("authority", authority);
 
         long r_id = Long.parseLong(id);
-        if(RequestedOrNot(r_id) == -1) return "redirect:/report/detail/" + r_id;
+        if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
 
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);
@@ -393,7 +381,7 @@ public class ReportController {
         model.addAttribute("authority", authority);
 
         long r_id = Long.parseLong(id);
-        if(RequestedOrNot(r_id) == -1) return "redirect:/report/detail/" + r_id;
+        if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
 
         List<Task> tlist = taskRepository.findByReportId(r_id);
         model.addAttribute("list",tlist);

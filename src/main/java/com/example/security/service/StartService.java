@@ -55,5 +55,38 @@ public class StartService {
         return "success";
     }
 
+    public String changePassword(Map<String, String> params, String username) {
+//        log.info("params = " + params.toString());
+        String now_pw = params.get("password_now");
+        String new_pw = params.get("password_new");
+        String check_pw= params.get("password_new_check");
 
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        User user = userRepository.findByUsername(username);
+        String nowPW = user.getPassword();
+
+        //back-end validation
+        String msg = "";
+        boolean isSuccess = true;
+        if(!passwordEncoder.matches(now_pw, nowPW)) { // now_password and DB_password is not equal
+            isSuccess = false;
+            msg += "Current_Password is not correct. ";
+        } if(now_pw.equals(new_pw)) { // new_password and now_password is equal
+            isSuccess = false;
+            msg += "New_Password should not be equal to Current_Password. ";
+        } if(!new_pw.equals(check_pw)) { // new_password and new_password_check is not equal
+            isSuccess = false;
+            msg += "New_Password and New_Password_Check is not equal. ";
+        } if(new_pw.length() < 4) { // new_password is too short
+            isSuccess = false;
+            msg += "New_Password is too short. ";
+        }
+
+        if(!isSuccess) return msg;
+
+        user.setPassword(passwordEncoder.encode(new_pw));
+        userRepository.save(user);
+
+        return "success";
+    }
 }

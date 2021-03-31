@@ -98,7 +98,7 @@ public class ReportController {
         return "report/report_detail";
     }
 
-    @GetMapping("/request_state")
+    @GetMapping("/request")
     public String reviewReport(@RequestParam("rId")String id) {
         reportService.setReportToRequest(Long.parseLong(id));
 
@@ -112,8 +112,13 @@ public class ReportController {
         return "redirect:/report";
     }
 
-    @GetMapping("/modify_daily")
-    public String modifyDaily(@RequestParam("reportID")String id, Model model, Authentication auth) {
+    @GetMapping("/modify/{type}")
+    public String modifyByType(
+            @PathVariable("type") String type,
+           @RequestParam("reportID")String id,
+           Model model,
+           Authentication auth
+    ) {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
@@ -127,7 +132,10 @@ public class ReportController {
         model.addAttribute("list", taskList);
         model.addAttribute("user", user);
 
-        return "report/modify_daily";
+        if(type.equals("daily")) return "report/modify_daily";
+        else if(type.equals("weekly")) return "report/modify_weekly";
+        else if(type.equals("monthly")) return "report/modify_monthly";
+        else return "report/modify_yearly";
     }
 
     @PostMapping("/modify_daily")
@@ -165,24 +173,6 @@ public class ReportController {
         }
 
         return "redirect:/report/detail/"+idx;
-    }
-
-    @GetMapping("/modify_yearly")
-    public String modifyYearly(@RequestParam("reportID")String id, Model model, Authentication auth) {
-        int loginOrNot = LoginOrNot(auth);
-        if(loginOrNot == -1) return "redirect:/";
-
-        long r_id = Long.parseLong(id);
-        if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
-
-        User user = reportService.authReturn(auth.getName());
-        List<Task> taskList = reportService.getTaskList(r_id);
-
-        model.addAttribute("list", taskList);
-        model.addAttribute("reportID", id);
-        model.addAttribute("user", user);
-
-        return "report/modify_yearly";
     }
 
     @PostMapping("/modify_yearly")
@@ -236,24 +226,6 @@ public class ReportController {
         }
 
         return "redirect:/report/detail/"+idx;
-    }
-
-    @GetMapping("/modify_monthly")
-    public String modifyMonthly(@RequestParam("reportID")String id, Model model, Authentication auth) {
-        int loginOrNot = LoginOrNot(auth);
-        if(loginOrNot == -1) return "redirect:/";
-
-        long r_id = Long.parseLong(id);
-        if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
-
-        User user = reportService.authReturn(auth.getName());
-        List<Task> taskList = taskRepository.findByReportId(r_id);
-
-        model.addAttribute("list", taskList);
-        model.addAttribute("reportID", id);
-        model.addAttribute("user", user);
-
-        return "report/modify_monthly";
     }
 
     @PostMapping("/modify_monthly")
@@ -340,24 +312,6 @@ public class ReportController {
         }
 
         return "redirect:/report/detail/"+idx;
-    }
-
-    @GetMapping("/modify_weekly")
-    public String modifyWeekly(@RequestParam("reportID")String id, Model model, Authentication auth) {
-        int loginOrNot = LoginOrNot(auth);
-        if(loginOrNot == -1) return "redirect:/";
-
-        long r_id = Long.parseLong(id);
-        if(reportService.checkRequested(r_id) == -1) return "redirect:/report/detail/" + r_id;
-
-        User user = reportService.authReturn(auth.getName());
-        List<Task> taskList = taskRepository.findByReportId(r_id);
-
-        model.addAttribute("list", taskList);
-        model.addAttribute("reportID", id);
-        model.addAttribute("user", user);
-
-        return "report/modify_weekly";
     }
 
     @PostMapping("/modify_weekly")

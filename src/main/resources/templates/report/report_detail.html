@@ -196,19 +196,19 @@
         </div>
         <hr/>
         <div th:if="${user.username} == ${info.username} and (${info.state} == 'Waiting' or ${info.state} == 'Rejected')" class="row p-l-15">
-            <form th:if="${info.reportType}=='Daily'" method="get" action="/report/modify_daily">
+            <form th:if="${info.reportType}=='Daily'" method="get" action="/report/modify/daily">
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-primary" value="Modify"/>
             </form>
-            <form th:if="${info.reportType}=='Weekly'" method="get" action="/report/modify_weekly">
+            <form th:if="${info.reportType}=='Weekly'" method="get" action="/report/modify/weekly">
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-primary" value="Modify"/>
             </form>
-            <form th:if="${info.reportType}=='Monthly'" method="get" action="/report/modify_monthly">
+            <form th:if="${info.reportType}=='Monthly'" method="get" action="/report/modify/monthly">
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-primary" value="Modify"/>
             </form>
-            <form th:if="${info.reportType}=='Yearly'" method="get" action="/report/modify_yearly">
+            <form th:if="${info.reportType}=='Yearly'" method="get" action="/report/modify/yearly">
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-primary" value="Modify"/>
             </form>
@@ -216,7 +216,7 @@
                 <input type="hidden" name="reportID" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-dark" value="Delete"/>
             </form>
-            <form action="/report/request_state" method="get">
+            <form action="/report/request" method="get">
                 <input type="hidden" name="rId" th:value="${info.reportId}"/>
                 <input type="submit" class="btn btn-info" value="Request"/>
             </form>

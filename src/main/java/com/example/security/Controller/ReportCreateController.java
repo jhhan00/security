@@ -1,10 +1,7 @@
 package com.example.security.Controller;
 
-import com.example.security.Dao.ReportDao;
-import com.example.security.Entity.Report;
-import com.example.security.Entity.ReportRepository;
-import com.example.security.Entity.Task;
-import com.example.security.Entity.TaskRepository;
+import com.example.security.Entity.*;
+import com.example.security.service.ReportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -17,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -31,12 +25,12 @@ public class ReportCreateController {
     ReportRepository reportRepository;
 
     @Autowired
-    ReportDao rd;
-
-    @Autowired
     TaskRepository taskRepository;
 
-    public int LoginOrNot(Authentication authentication) {
+    @Autowired
+    ReportService reportService;
+
+    private int LoginOrNot(Authentication authentication) {
         // log.info("auth : " + authentication);
         if(authentication == null)  return -1;
         else return 1;
@@ -47,11 +41,11 @@ public class ReportCreateController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
-
+        User user = reportService.authReturn(auth.getName());
         List<Map<String, Object>> list = new ArrayList<>();
+
         model.addAttribute("task", list);
+        model.addAttribute("user", user);
         model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/create_daily";
@@ -110,19 +104,20 @@ public class ReportCreateController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
+        User user = reportService.authReturn(auth.getName());
+        List<Report> reportList = reportRepository.findByReportTypeAndUsername("Weekly",auth.getName());
 
-        List<Report> rlist = reportRepository.findByReportTypeAndUsername("Weekly",auth.getName());
         long idx = -1;
         boolean isNull = true; // 아무 것도 없으면 처음 주간 리포트 쓰는 경우
-        if(rlist.size() != 0) {
-            idx = rlist.get(rlist.size()-1).getReportId();
+        if(reportList.size() != 0) {
+            idx = reportList.get(reportList.size()-1).getReportId();
             isNull = false; // 있다면 주간 리포트를 한 번 이상 쓴 경우
         }
-        List<Task> tlist = null;
-        if(idx != -1) tlist = taskRepository.findByReportId(idx);
-        model.addAttribute("task", tlist);
+        List<Task> taskList = null;
+        if(idx != -1) taskList = taskRepository.findByReportId(idx);
+
+        model.addAttribute("task", taskList);
+        model.addAttribute("user", user);
         model.addAttribute("Valid", isNull);
         model.addAttribute("oldUrl", request.getHeader("referer"));
 
@@ -193,23 +188,24 @@ public class ReportCreateController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
+        User user = reportService.authReturn(auth.getName());
+        List<Report> reportList = reportRepository.findByReportTypeAndUsername("Monthly", auth.getName());
 
-        List<Report> rlist = reportRepository.findByReportTypeAndUsername("Monthly", auth.getName());
-        System.out.println(rlist);
+        System.out.println(reportList);
         long idx = -1;
         boolean isNull = true;
-        if(rlist.size() != 0) {
-            idx = rlist.get(rlist.size()-1).getReportId();
+        if(reportList.size() != 0) {
+            idx = reportList.get(reportList.size()-1).getReportId();
             isNull = false;
         }
 
-        List<Task> tlist = new ArrayList<>();
-        if(idx != -1) tlist = taskRepository.findByReportIdAndReportKind(idx, "Next_Month_plan");
-        System.out.println(tlist);
-        model.addAttribute("task",tlist);
-        model.addAttribute("boolValue",isNull);
+        List<Task> taskList = new ArrayList<>();
+        if(idx != -1) taskList = taskRepository.findByReportIdAndReportKind(idx, "Next_Month_plan");
+        System.out.println(taskList);
+
+        model.addAttribute("user", user);
+        model.addAttribute("task", taskList);
+        model.addAttribute("boolValue", isNull);
         model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/create_monthly";
@@ -297,11 +293,11 @@ public class ReportCreateController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
+        User user = reportService.authReturn(auth.getName());
+        List<Task> taskList = new ArrayList<>();
 
-        List<Task> tlist = new ArrayList<>();
-        model.addAttribute("task", tlist);
+        model.addAttribute("user", user);
+        model.addAttribute("task", taskList);
         model.addAttribute("oldUrl", request.getHeader("referer"));
 
         return "report/create_yearly";
@@ -372,10 +368,10 @@ public class ReportCreateController {
         int loginOrNot = LoginOrNot(auth);
         if(loginOrNot == -1) return "redirect:/";
 
-        Map<String, String> authority = rd.getUserInfo(auth.getName());
-        model.addAttribute("authority", authority);
-
+        User user = reportService.authReturn(auth.getName());
         List<Task> taskList = new ArrayList<>();
+
+        model.addAttribute("user", user);
         model.addAttribute("task", taskList);
         model.addAttribute("oldUrl", request.getHeader("referer"));
 

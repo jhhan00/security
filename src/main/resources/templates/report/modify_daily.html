@@ -45,7 +45,8 @@
         </div><hr/>
         <div>
             <p>Report ID : <span th:text="${reportID}"></span></p>
-            <h5>Daily Report Modify</h5><br/>
+            <h5>Daily Report Modify</h5>
+            <br/>
             <form method="post" action="/report/modify_daily">
                 <input type="hidden" name="reportID" th:value="${reportID}"/>
                 <div th:each="view, i:${list}">

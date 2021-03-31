@@ -1,26 +1,16 @@
 package com.example.security.controller;
 
-import com.example.security.Dao.SimpleUserDao;
-import com.example.security.entity.Report;
-import com.example.security.entity.ReportRepository;
-import com.example.security.extra.GenerateCertNumber;
 import com.example.security.service.EmailSendService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Date;
-import java.util.Enumeration;
 
 @Slf4j
 @Controller

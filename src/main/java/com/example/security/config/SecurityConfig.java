@@ -1,4 +1,4 @@
-package com.example.security;
+package com.example.security.config;
 
 import com.example.security.Handler.TaskImplementingLogoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.jdbcAuthentication()
                 .dataSource(dataSource)
                 .rolePrefix("ROLE_")
-                .usersByUsernameQuery("select username, password, enabled from users where username = ?")
-                .authoritiesByUsernameQuery("select username, role from users where username = ?");
+                .usersByUsernameQuery("select username, password, enabled from user_table where username = ?")
+                .authoritiesByUsernameQuery("select username, role from user_table where username = ?");
     }
 
     @Bean

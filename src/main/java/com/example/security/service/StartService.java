@@ -24,23 +24,23 @@ public class StartService {
         int loc = userID.indexOf("@pharmcadd.com");
 
         //back-end validation
-        String result = "";
+        StringBuilder result = new StringBuilder();
         boolean isValidate = true;
         if(loc < 0) { // @pharmcadd.com으로 끝나는지 확인
-            result += "user_id should be end with '@pharmcadd.com'. ";
+            result.append("user_id should be end with '@pharmcadd.com'. ");
             isValidate = false;
         } if(userPW.length() < 4) { // 비밀번호가 너무 짧지 않은지 확인
-            result += "user_password should be at least 4 length. ";
+            result.append("user_password should be at least 4 length. ");
             isValidate = false;
         } if(realName.length() <= 0) { // 실제 이름이 입력되어야 한다.
-            result += "real name should be entered. ";
+            result.append("real name should be entered. ");
             isValidate = false;
         } if(!userPW.equals(checkPW)) { // 비밀번호와 비밀번호 확인이 같아야 한다.
-            result += "password and password_check should be same. ";
+            result.append("password and password_check should be same. ");
             isValidate = false;
         }
 
-        if(!isValidate) return result;
+        if(!isValidate) return result.toString();
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encryptedPassword = passwordEncoder.encode(userPW);

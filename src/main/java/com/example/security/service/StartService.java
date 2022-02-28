@@ -29,13 +29,16 @@ public class StartService {
         if(loc < 0) { // @pharmcadd.com으로 끝나는지 확인
             result.append("user_id should be end with '@pharmcadd.com'. ");
             isValidate = false;
-        } if(userPW.length() < 4) { // 비밀번호가 너무 짧지 않은지 확인
+        }
+        if(userPW.length() < 4) { // 비밀번호가 너무 짧지 않은지 확인
             result.append("user_password should be at least 4 length. ");
             isValidate = false;
-        } if(realName.length() <= 0) { // 실제 이름이 입력되어야 한다.
+        }
+        if(realName.length() <= 0) { // 실제 이름이 입력되어야 한다.
             result.append("real name should be entered. ");
             isValidate = false;
-        } if(!userPW.equals(checkPW)) { // 비밀번호와 비밀번호 확인이 같아야 한다.
+        }
+        if(!userPW.equals(checkPW)) { // 비밀번호와 비밀번호 확인이 같아야 한다.
             result.append("password and password_check should be same. ");
             isValidate = false;
         }
@@ -66,23 +69,26 @@ public class StartService {
         String nowPW = user.getPassword();
 
         //back-end validation
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         boolean isSuccess = true;
         if(!passwordEncoder.matches(now_pw, nowPW)) { // now_password and DB_password is not equal
             isSuccess = false;
-            msg += "Current_Password is not correct. ";
-        } if(now_pw.equals(new_pw)) { // new_password and now_password is equal
+            msg.append("Current_Password is not correct. ");
+        }
+        if(now_pw.equals(new_pw)) { // new_password and now_password is equal
             isSuccess = false;
-            msg += "New_Password should not be equal to Current_Password. ";
-        } if(!new_pw.equals(check_pw)) { // new_password and new_password_check is not equal
+            msg.append("New_Password should not be equal to Current_Password. ");
+        }
+        if(!new_pw.equals(check_pw)) { // new_password and new_password_check is not equal
             isSuccess = false;
-            msg += "New_Password and New_Password_Check is not equal. ";
-        } if(new_pw.length() < 4) { // new_password is too short
+            msg.append("New_Password and New_Password_Check is not equal. ");
+        }
+        if(new_pw.length() < 4) { // new_password is too short
             isSuccess = false;
-            msg += "New_Password is too short. ";
+            msg.append("New_Password is too short. ");
         }
 
-        if(!isSuccess) return msg;
+        if(!isSuccess) return msg.toString();
 
         user.setPassword(passwordEncoder.encode(new_pw));
         userRepository.save(user);
